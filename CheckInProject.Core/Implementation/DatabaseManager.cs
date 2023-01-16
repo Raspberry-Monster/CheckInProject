@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CheckInProject.Abstraction.Models;
+using CheckInProject.Core.Models;
 using CheckInProject.Core.Interfaces;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 
 namespace CheckInProject.Core.Implementation
 {

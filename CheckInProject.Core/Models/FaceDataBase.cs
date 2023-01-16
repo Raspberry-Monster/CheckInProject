@@ -1,12 +1,7 @@
-﻿
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection.Metadata;
-using System.Text.Json.Serialization;
 
-namespace CheckInProject.Abstraction.Models
+namespace CheckInProject.Core.Models
 {
     public class RawFaceDataBase
     {

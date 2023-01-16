@@ -1,9 +1,8 @@
-﻿using CheckInProject.Abstraction.Models;
+﻿using CheckInProject.Core.Models;
 using CheckInProject.Core.Interfaces;
 using FaceRecognitionDotNet;
 using System.Drawing;
 using Microsoft.Extensions.DependencyInjection;
-using System.IO;
 
 namespace CheckInProject.Core.Implementation
 {

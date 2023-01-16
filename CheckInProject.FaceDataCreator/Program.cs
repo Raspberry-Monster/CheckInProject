@@ -1,13 +1,10 @@
-﻿#region
-using CheckInProject.Abstraction.Models;
+﻿using CheckInProject.Core.Models;
 using FaceRecognitionDotNet;
 using System.Drawing;
-using CheckInProject.Core;
 using Microsoft.Extensions.DependencyInjection;
 using CheckInProject.Core.Interfaces;
 using CheckInProject.Core.Implementation;
-using System.Security.Cryptography.X509Certificates;
-#endregion
+
 namespace CheckInProject.FaceDataCreator;
 internal class Program
 {

@@ -10,8 +10,7 @@
 
     <Grid>
         <StackPanel Orientation="Vertical">
-            <Button Click="Button_Click" Content="打开文件"/>
-            <Button Click="Button_Click_1" Content="比对文件"/>
+            <Button Click="Button_Click" Content="打开并比对文件"/>
         </StackPanel>
     </Grid>
 </Page>
