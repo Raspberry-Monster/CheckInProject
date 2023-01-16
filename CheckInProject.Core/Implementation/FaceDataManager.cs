@@ -13,7 +13,7 @@ namespace CheckInProject.Core.Implementation
 
         public IServiceProvider Provider;
 
-        public RawFaceDataBase CreateFaceData(Bitmap sourceData,string sourceName)
+        public RawFaceDataBase CreateFaceData(Bitmap sourceData,string sourceName )
         {
             using (var recognitionImage = FaceRecognition.LoadImage(sourceData))
             {

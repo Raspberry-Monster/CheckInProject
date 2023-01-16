@@ -23,7 +23,7 @@ namespace CheckInProject.Abstraction.Models
         public string? Name { get; set; }
         [Key]
         public required string FaceEncodingString { get; set; }
-        public RawFaceDataBase ToRawStringFaceDataBase()
+        public RawFaceDataBase ConvertToRawFaceDataBase()
         {
             var encodingResult = Array.ConvertAll(FaceEncodingString.Split(';'), double.Parse);
             return new RawFaceDataBase { FaceEncoding= encodingResult, Name = Name };

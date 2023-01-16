@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CheckInProject.App.Pages;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace CheckInProject.App
 {
@@ -20,9 +23,15 @@ namespace CheckInProject.App
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private readonly IServiceProvider ServiceProvider;
+        public MainWindow(IServiceProvider provider)
         {
+            ServiceProvider = provider;
             InitializeComponent();
+        }
+        private void ScanPage_Click(object sender, RoutedEventArgs e)
+        {
+            RootFrame.Navigate(ServiceProvider.GetRequiredService<ScanPage>());
         }
     }
 }
