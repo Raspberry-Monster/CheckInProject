@@ -1,49 +1,59 @@
 ﻿#region
+using CheckInProject.Abstraction.Models;
 using FaceRecognitionDotNet;
 using System.Drawing;
 using System.Text.Json;
+using CheckInProject.Core;
+using Microsoft.Extensions.DependencyInjection;
+using CheckInProject.Core.Interfaces;
+using CheckInProject.Core.Implementation;
 #endregion
 namespace CheckInProject.FaceDataCreator;
 internal class Program
 {
+    public static IServiceCollection ServiceCollections = new ServiceCollection();
+    public static IServiceProvider ?ServiceProvider;
     static void Main()
     {
-        var targetPath = Console.ReadLine();
-        var FaceDataDictionary = new List<FaceDataBase>();
         if (!Directory.Exists("models"))
         {
             Console.WriteLine("Error: Cannot Find Model File!");
             return;
         }
+        else
+        {
+            var faceRecognitionService = FaceRecognition.Create("models");
+            var database = new StringFaceDataBaseContext();
+            ServiceCollections.AddSingleton(faceRecognitionService);
+            ServiceCollections.AddSingleton(database);
+            ServiceProvider=ServiceCollections.BuildServiceProvider();
+        }
+        var targetPath = Console.ReadLine();
+        var FaceDataList = new List<RawFaceDataBase>();
+        
         if (!string.IsNullOrWhiteSpace(targetPath) && Directory.Exists(targetPath))
         {
             var imageFiles = Directory.GetFiles(targetPath);
-            using (var faceAPI = FaceRecognition.Create("models"))
+            IFaceDataManager faceDataManager = new FaceDataManager(ServiceProvider);
+            foreach (var imageFile in imageFiles)
             {
-                foreach (var imageFile in imageFiles)
+                FileInfo fileInfo = new FileInfo(imageFile);
+                if (fileInfo.Extension == ".jpg")
                 {
-                    FileInfo fileInfo = new FileInfo(imageFile);
-                    if (fileInfo.Extension == ".jpg")
+                    Console.WriteLine($"Creating Face Encoding For File {fileInfo.Name}.");
+                    using (var imageBitmap = new Bitmap(imageFile))
                     {
-                        Console.WriteLine($"Creating Face Encoding For File {fileInfo.Name}.");
-                        using (var imageBitmap = new Bitmap(imageFile))
-                        {
-                            using (var recognitionImage = FaceRecognition.LoadImage(imageBitmap))
-                            {
-                                var encoding = faceAPI.FaceEncodings(recognitionImage).First().GetRawEncoding();
-                                var personName = fileInfo.Name.Replace(fileInfo.Extension, string.Empty);
-                                FaceDataDictionary.Add(new FaceDataBase { FaceEncoding = encoding, Name = personName });
-                            }
-                        }
-                        Console.WriteLine($"Face Encoding For File {fileInfo.Name} Has Been Created.");
+                        var sourceName = fileInfo.Name.Replace(fileInfo.Extension, string.Empty);
+                        var resultFaceData = faceDataManager.CreateFaceData(imageBitmap, sourceName);
+                        FaceDataList.Add(resultFaceData);
                     }
+                    Console.WriteLine($"Face Encoding For File {fileInfo.Name} Has Been Created.");
                 }
             }
+            var stringFaceDataList = FaceDataList.Select(t => t.ConvertToStringFaceDataBase()).ToList();
+            IDatabaseManager databaseManager = new DatabaseManager(ServiceProvider);
+            databaseManager.ImportFaceData(stringFaceDataList);
             Console.WriteLine("Start Saving Result File.");
-            var result = JsonSerializer.Serialize(FaceDataDictionary);
-            var streamWriter = new StreamWriter("FaceDataFile.json", false);
-            streamWriter.Write(result);
-            streamWriter.Dispose();
             Console.WriteLine("File Saved. \nPress Any Key To Exit.");
             Console.ReadLine();
         }
