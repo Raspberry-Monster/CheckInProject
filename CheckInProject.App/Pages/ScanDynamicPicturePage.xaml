@@ -17,6 +17,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Image Grid.Row="0" Source="{Binding SourceImage}" />
+        <TextBlock Grid.Row="1" Text="{Binding ResultNames,Mode=OneWay}" FontSize="15" HorizontalAlignment="Center" />
         <Grid Grid.Row="2">
             <TextBlock Text="动态识别页" HorizontalAlignment="Left" FontSize="15"/>
             <Grid HorizontalAlignment="Right">

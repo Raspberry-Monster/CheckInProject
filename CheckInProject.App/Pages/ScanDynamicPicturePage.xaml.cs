@@ -8,6 +8,14 @@ using System.Windows.Media.Imaging;
 using CheckInProject.App.Utils;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
+using FaceRecognitionDotNet;
+using FaceRecognitionDotNet.Extensions;
+using Wpf.Ui.Controls;
+using Rect = OpenCvSharp.Rect;
+using System.Drawing;
+using CheckInProject.Core.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace CheckInProject.App.Pages
 {
@@ -16,6 +24,9 @@ namespace CheckInProject.App.Pages
     /// </summary>
     public partial class ScanDynamicPicturePage : Page, INotifyPropertyChanged
     {
+        private IServiceProvider ServiceProvider;
+        private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
+        private IDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IDatabaseManager>();
         public BitmapSource SourceImage
         {
             get => _sourceImage;
@@ -33,8 +44,20 @@ namespace CheckInProject.App.Pages
 
         public ScanDynamicPicturePage(IServiceProvider serviceProvider)
         {
+            ServiceProvider = serviceProvider;
             InitializeComponent();
         }
+
+        public string ResultNames
+        {
+            get => _resultName;
+            set
+            {
+                _resultName = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private string _resultName = string.Empty;
 
         private void StartCaptureButton_Click(object sender, RoutedEventArgs e)
         {
@@ -44,21 +67,52 @@ namespace CheckInProject.App.Pages
                 Task.Run(CaptureVideo);
             }
         }
-        public void CaptureVideo()
+        public async void CaptureVideo()
         {
-            var capture = new VideoCapture(0);
-            if (!capture.IsOpened())
-                return;
-            var image = new Mat();
-            while (CameraMode)
+            using (var capture = new VideoCapture(0))
             {
-                capture.Read(image);
-                if (image.Empty())
-                    break;
-                var resultPicture = PictureConverters.ToBitmapImage(image.ToBitmap());
-                SourceImage = resultPicture;
+                var capturedTime = 0;
+                if (!capture.IsOpened())
+                    return;
+                var image = new Mat();
+                CascadeClassifier cascade = new CascadeClassifier("haarcascade_frontalface_alt.xml");
+                while (CameraMode && capturedTime < 15)
+                {
+                    capture.Read(image);
+                    if (image.Empty())
+                        break;
+                    Rect[] faces = cascade.DetectMultiScale(
+                        image: image,
+                        scaleFactor: 1.1,
+                        minNeighbors: 1,
+                        flags: HaarDetectionTypes.DoRoughSearch | HaarDetectionTypes.ScaleImage,
+                        minSize: new OpenCvSharp.Size(30, 30)
+                    );
+                    if (faces.Length <= 0) //没识别到人脸
+                    {
+                        var resultPicture = PictureConverters.ToBitmapImage(image.ToBitmap());
+                        SourceImage = resultPicture;
+                        await Task.Delay(100);
+                        capturedTime = 0;
+                    }
+                    else
+                    {
+                        var resultPicture = PictureConverters.ToBitmapImage(image.ToBitmap());
+                        SourceImage = resultPicture;
+                        await Task.Delay(100);
+                        capturedTime++;
+                    }
+                }
+                CameraMode = false;
+                var targetBitmap = image.ToBitmap();
+                    var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, ""));
+                    var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawFaceDataBase()).ToList());
+                    var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
+                    if (result.Count > 0)
+                    {
+                        ResultNames = result.First();
+                    }
             }
-            capture.Dispose();
         }
         public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {

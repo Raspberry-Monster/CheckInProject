@@ -22,6 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="haarcascade_frontalface_alt.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="models\dlib_face_recognition_resnet_model_v1.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
