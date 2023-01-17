@@ -21,12 +21,20 @@ namespace CheckInProject.Core.Implementation
                 return new RawFaceDataBase { FaceEncoding = encoding, Name = personName };
             }
         }
+        public IList<RawFaceDataBase> CreateFacesData(Bitmap sourceData)
+        {
+            using (var recognitionImage = FaceRecognition.LoadImage(sourceData))
+            {
+                var encodings = FaceRecognitionAPI.FaceEncodings(recognitionImage).Select(t => new RawFaceDataBase { FaceEncoding = t.GetRawEncoding() }).ToList();
+                return encodings;
+            }
+        }
 
-        public IList<string> CompareFaces(IList<RawFaceDataBase> faceDataList, RawFaceDataBase targetFaceData)
+        public IList<string> CompareFace(IList<RawFaceDataBase> faceDataList, RawFaceDataBase targetFaceData)
         {
             var faceEncodingList = faceDataList.Select(t => FaceRecognition.LoadFaceEncoding(t.FaceEncoding)).ToList();
             var targetFaceEncoding = FaceRecognition.LoadFaceEncoding(targetFaceData.FaceEncoding);
-            var recognizedFaces = FaceRecognition.CompareFaces(faceEncodingList, targetFaceEncoding);
+            var recognizedFaces = FaceRecognition.CompareFaces(faceEncodingList, targetFaceEncoding, 0.5);
             var reconizedNames= new List<string>();
             var index = 0;
             foreach (var recognizedFace in recognizedFaces)
@@ -40,14 +48,26 @@ namespace CheckInProject.Core.Implementation
             }
             return reconizedNames;
         }
-
-        public IList<RawFaceDataBase> CreateFacesData(Bitmap sourceData)
+        public IList<string> CompareFaces(IList<RawFaceDataBase> faceDataList, IList<RawFaceDataBase> targetFaceDataList)
         {
-            using (var recognitionImage = FaceRecognition.LoadImage(sourceData))
+            var faceEncodingList = faceDataList.Select(t => FaceRecognition.LoadFaceEncoding(t.FaceEncoding)).ToList();
+            var reconizedNames = new List<string>();
+            foreach (var targetFaceData in targetFaceDataList)
             {
-                var encodings = FaceRecognitionAPI.FaceEncodings(recognitionImage).Select(t => new RawFaceDataBase { FaceEncoding = t.GetRawEncoding() }).ToList();
-                return encodings;
+                var targetFaceEncoding = FaceRecognition.LoadFaceEncoding(targetFaceData.FaceEncoding);
+                var recognizedFaces = FaceRecognition.CompareFaces(faceEncodingList, targetFaceEncoding, 0.5);
+                var index = 0;
+                foreach (var recognizedFace in recognizedFaces)
+                {
+                    if (recognizedFace)
+                    {
+                        var resultName = faceDataList[index].Name;
+                        if (!string.IsNullOrEmpty(resultName)) reconizedNames.Add(resultName);
+                    }
+                    index++;
+                }
             }
+            return reconizedNames;
         }
 
         public FaceDataManager(IServiceProvider serviceProvider)

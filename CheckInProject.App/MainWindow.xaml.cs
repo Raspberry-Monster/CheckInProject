@@ -16,9 +16,19 @@ namespace CheckInProject.App
             ServiceProvider = provider;
             InitializeComponent();
         }
-        private void ScanPage_Click(object sender, RoutedEventArgs e)
+        private void ScanStaticPicturePage_Click(object sender, RoutedEventArgs e)
         {
-            RootFrame.Navigate(ServiceProvider.GetRequiredService<ScanPage>());
+            RootFrame.Navigate(ServiceProvider.GetRequiredService<ScanStaticPicturePage>());
+        }
+
+        private void ScanDynamicPicturePage_Click(object sender, RoutedEventArgs e)
+        {
+            RootFrame.Navigate(ServiceProvider.GetRequiredService<ScanDynamicPicturePage>());
+        }
+
+        private void ScanHistoryPage_Click(object sender, RoutedEventArgs e)
+        {
+            RootFrame.Navigate(ServiceProvider.GetRequiredService<HistoryPage>());
         }
     }
 }

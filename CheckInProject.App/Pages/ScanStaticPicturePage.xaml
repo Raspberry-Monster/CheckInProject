@@ -1,0 +1,30 @@
+﻿<Page x:Class="CheckInProject.App.Pages.ScanStaticPicturePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:CheckInProject.App.Pages"
+      xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ScanStaticPicturePage"
+      Style="{StaticResource UiPage}"
+      DataContext="{Binding RelativeSource={RelativeSource Self}}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Image Grid.Row="0" Source="{Binding SourceImage}" />
+        <TextBlock Grid.Row="1" Text="{Binding ResultNames,Mode=OneWay}" FontSize="15" HorizontalAlignment="Center" />
+        <Grid Grid.Row="2">
+            <TextBlock Text="静态识别页" HorizontalAlignment="Left" FontSize="15"/>
+            <Grid HorizontalAlignment="Right">
+                <Button x:Name="CompareSingleFaceButton" Click="CompareSingleFace_Click" Content="打开并比对单人照片文件"/>
+                <Button x:Name="CompareMultipleFacesButton" Click="CompareMultipleFaces_Click" Content="打开并比对多人照片文件" Margin="180,0,0,0"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

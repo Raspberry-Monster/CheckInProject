@@ -37,11 +37,15 @@
                 SelectedPageIndex="0">
                 <wpfui:NavigationStore.Items>
                     <wpfui:NavigationItem
-                        Click="ScanPage_Click"
-                        Content="人脸识别"
-                        Icon="Accessibility24" />
+                        Click="ScanStaticPicturePage_Click"
+                        Content="静态识别"
+                        Icon="Accessibility24" Cursor="Hand" />
                     <wpfui:NavigationItem
-                        Click="ScanPage_Click"
+                        Click="ScanDynamicPicturePage_Click"
+                        Content="动态识别"
+                        Icon="Accessibility24" Cursor="Hand" />
+                    <wpfui:NavigationItem
+                        Click="ScanHistoryPage_Click"
                         Content="识别记录"
                         Icon="Storage24" Cursor="Hand" />
                 </wpfui:NavigationStore.Items>

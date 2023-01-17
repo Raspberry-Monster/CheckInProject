@@ -30,9 +30,9 @@ namespace CheckInProject.App
             service.AddSingleton<IFaceDataManager, FaceDataManager>();
             // For UI
             service.AddSingleton<MainWindow>();
-            service.AddTransient<ScanPage>();
+            service.AddTransient<ScanStaticPicturePage>();
             service.AddTransient<HistoryPage>();
-            //service.AddTransient<SettingsPage>();
+            service.AddTransient<ScanDynamicPicturePage>();
             ServiceProvider = service.BuildServiceProvider();
         }
         protected override void OnStartup(StartupEventArgs e)
