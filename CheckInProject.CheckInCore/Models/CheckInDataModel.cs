@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,9 +14,11 @@ namespace CheckInProject.CheckInCore.Models
     {
         public string? Name { get; set; }
         public uint? PersonID { get; set; }
-        public bool MorningCheckedIn { get; set; }
+        [Key]
+        public  Guid RecordID { get; set; }
+        public bool MorningCheckedIn { get; set; } = false;
         public TimeOnly? MorningCheckInTime { get; set; }
-        public bool AfternoonCheckedIn { get; set; }
+        public bool AfternoonCheckedIn { get; set; } = false;
         public TimeOnly? AfternoonCheckInTime { get; set; }
         public bool EveningCheckedIn { get; set; } = false;
         public TimeOnly? EveningCheckInTime { get; set; }

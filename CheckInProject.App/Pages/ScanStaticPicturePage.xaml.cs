@@ -1,4 +1,5 @@
 ﻿using CheckInProject.App.Utils;
+using CheckInProject.CheckInCore.Interfaces;
 using CheckInProject.PersonDataCore.Interfaces;
 using CheckInProject.PersonDataCore.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,7 @@ namespace CheckInProject.App.Pages
         public IServiceProvider ServiceProvider;
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
         private IPersonDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IPersonDatabaseManager>();
+        private ICheckInManager CheckInManager =>ServiceProvider.GetRequiredService<ICheckInManager>();
         private List<RawPersonDataBase> ResultItems => ServiceProvider.GetRequiredService<List<RawPersonDataBase>>();
 
         public string ResultNames
@@ -74,7 +76,11 @@ namespace CheckInProject.App.Pages
                         var resultName = string.Empty;
                         if (result.Count > 0)
                         {
-                            if (result.Count == 1) resultName = result.First().Name;
+                            if (result.Count == 1)
+                            {
+                                resultName = result.First().Name;
+                                await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().PersonID);
+                            }
                             else
                             {
                                 ResultItems.Clear();

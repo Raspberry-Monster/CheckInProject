@@ -18,14 +18,14 @@ namespace CheckInProject.PersonDataCore.Implementation
             {
                 var encoding = FaceRecognitionAPI.FaceEncodings(recognitionImage).First().GetRawEncoding();
                 var personName = sourceName;
-                return new RawPersonDataBase { FaceEncoding = encoding, Name = personName ,PersonID = personID};
+                return new RawPersonDataBase { FaceEncoding = encoding, Name = personName ,PersonID = personID, RecordID = Guid.NewGuid()};
             }
         }
         public IList<RawPersonDataBase> CreateFacesData(Bitmap sourceData)
         {
             using (var recognitionImage = FaceRecognition.LoadImage(sourceData))
             {
-                var encodings = FaceRecognitionAPI.FaceEncodings(recognitionImage).Select(t => new RawPersonDataBase { FaceEncoding = t.GetRawEncoding() }).ToList();
+                var encodings = FaceRecognitionAPI.FaceEncodings(recognitionImage).Select(t => new RawPersonDataBase { FaceEncoding = t.GetRawEncoding(), RecordID = Guid.Empty}).ToList();
                 return encodings;
             }
         }

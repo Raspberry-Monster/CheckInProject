@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CheckInProject.PersonDataCore.Models;
 using CheckInProject.PersonDataCore.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 namespace CheckInProject.PersonDataCore.Implementation
 {
@@ -15,15 +16,15 @@ namespace CheckInProject.PersonDataCore.Implementation
         public IServiceProvider Provider;
         public IList<StringPersonDataBase> GetFaceData()
         {
-            var result = DatabaseService.FaceData.ToList();
+            var result = DatabaseService.PersonData.ToList();
             return result;
         }
 
-        public void ImportFaceData(IList<StringPersonDataBase> faceData)
+        public async void ImportFaceData(IList<StringPersonDataBase> faceData)
         {
             ClearFaceData();
             DatabaseService.AddRange(faceData);
-            DatabaseService.SaveChanges();
+            await DatabaseService.SaveChangesAsync();
         }
 
         public void ClearFaceData()

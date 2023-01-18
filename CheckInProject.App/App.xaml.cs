@@ -8,6 +8,9 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Collections.Generic;
+using CheckInProject.CheckInCore.Interfaces;
+using CheckInProject.CheckInCore.Implementation;
+using CheckInProject.CheckInCore.Models;
 
 namespace CheckInProject.App
 {
@@ -26,7 +29,9 @@ namespace CheckInProject.App
             var faceRecognitionService = FaceRecognition.Create("FaceRecognitionModel");
             service.AddSingleton(faceRecognitionService);
             service.AddSingleton<StringPersonDataBaseContext>();
+            service.AddSingleton<CheckInDataModelContext>();
             service.AddSingleton<IPersonDatabaseManager, PersonDatabaseManager>();
+            service.AddSingleton<ICheckInManager, CheckInManager>();
             service.AddSingleton<IFaceDataManager, FaceDataManager>();
             service.AddSingleton<List<RawPersonDataBase>>();
             // For UI

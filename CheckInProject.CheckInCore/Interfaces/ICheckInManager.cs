@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CheckInProject.CheckInCore.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,8 @@ namespace CheckInProject.CheckInCore.Interfaces
 {
     public interface ICheckInManager
     {
-        public bool CheckIn();
-        public void ExportToExcelFile();
+        public Task<bool> CheckIn(DateOnly currentDate, TimeOnly currentTime, uint? personId);
+        public List<CheckInDataModels> ShowData();
+        public void ExportDataToExcelFile();
     }
 }

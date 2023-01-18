@@ -19,17 +19,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CheckInProject.Core\CheckInProject.PersonDataCore.csproj" />
+    <ProjectReference Include="..\CheckInProject.CheckInCore\CheckInProject.CheckInCore.csproj" />
+    <ProjectReference Include="..\CheckInProject.PersonDataCore\CheckInProject.PersonDataCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="CheckInData.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="haarcascade_frontalface_alt.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="FaceRecognitionModel\dlib_face_recognition_resnet_model_v1.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="FaceData.db">
+    <None Update="PersonData.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="FaceRecognitionModel\mmod_human_face_detector.dat">
