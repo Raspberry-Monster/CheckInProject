@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Collections.Generic;
 
 namespace CheckInProject.App
