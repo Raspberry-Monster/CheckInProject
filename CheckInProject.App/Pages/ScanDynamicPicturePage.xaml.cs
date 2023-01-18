@@ -16,6 +16,8 @@ using System.Drawing;
 using CheckInProject.Core.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
+using CheckInProject.Core.Models;
+using System.Collections.Generic;
 
 namespace CheckInProject.App.Pages
 {
@@ -27,6 +29,7 @@ namespace CheckInProject.App.Pages
         private IServiceProvider ServiceProvider;
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
         private IDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IDatabaseManager>();
+        private List<RawFaceDataBase> ResultItems => ServiceProvider.GetRequiredService<List<RawFaceDataBase>>();
         public BitmapSource SourceImage
         {
             get => _sourceImage;
@@ -108,10 +111,20 @@ namespace CheckInProject.App.Pages
                     var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, ""));
                     var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawFaceDataBase()).ToList());
                     var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
-                    if (result.Count > 0)
+                var resultName = string.Empty;
+                if (result.Count > 0)
+                {
+                    if (result.Count == 1) resultName = result.First().Name;
+                    else
                     {
-                        ResultNames = result.First();
+                        ResultItems.Clear();
+                        ResultItems.AddRange(result);
+                        Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>()));
                     }
+                }
+                if (string.IsNullOrEmpty(resultName)) resultName = "未识别到已知人脸";
+                ResultNames = resultName;
+                image.Dispose();
             }
         }
         public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")

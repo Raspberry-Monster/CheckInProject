@@ -13,8 +13,9 @@ namespace CheckInProject.App
         private readonly IServiceProvider ServiceProvider;
         public MainWindow(IServiceProvider provider)
         {
-            ServiceProvider = provider;
             InitializeComponent();
+            ServiceProvider = provider;
+            App.RootFrame = RootFrame;
         }
         private void ScanStaticPicturePage_Click(object sender, RoutedEventArgs e)
         {

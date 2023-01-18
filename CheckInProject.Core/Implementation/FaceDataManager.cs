@@ -12,7 +12,7 @@ namespace CheckInProject.Core.Implementation
 
         public IServiceProvider Provider;
 
-        public RawFaceDataBase CreateFaceData(Bitmap sourceData,string sourceName )
+        public RawFaceDataBase CreateFaceData(Bitmap sourceData, string? sourceName )
         {
             using (var recognitionImage = FaceRecognition.LoadImage(sourceData))
             {
@@ -30,28 +30,28 @@ namespace CheckInProject.Core.Implementation
             }
         }
 
-        public IList<string> CompareFace(IList<RawFaceDataBase> faceDataList, RawFaceDataBase targetFaceData)
+        public IList<RawFaceDataBase> CompareFace(IList<RawFaceDataBase> faceDataList, RawFaceDataBase targetFaceData)
         {
             var faceEncodingList = faceDataList.Select(t => FaceRecognition.LoadFaceEncoding(t.FaceEncoding)).ToList();
             var targetFaceEncoding = FaceRecognition.LoadFaceEncoding(targetFaceData.FaceEncoding);
             var recognizedFaces = FaceRecognition.CompareFaces(faceEncodingList, targetFaceEncoding, 0.5);
-            var reconizedNames= new List<string>();
+            var reconizedNames= new List<RawFaceDataBase>();
             var index = 0;
             foreach (var recognizedFace in recognizedFaces)
             {
                 if (recognizedFace)
                 {
-                    var resultName = faceDataList[index].Name;
-                    if (!string.IsNullOrEmpty(resultName))reconizedNames.Add(resultName);
+                    var resultName = faceDataList[index];
+                    reconizedNames.Add(resultName);
                 }
                 index++;
             }
             return reconizedNames;
         }
-        public IList<string> CompareFaces(IList<RawFaceDataBase> faceDataList, IList<RawFaceDataBase> targetFaceDataList)
+        public IList<RawFaceDataBase> CompareFaces(IList<RawFaceDataBase> faceDataList, IList<RawFaceDataBase> targetFaceDataList)
         {
             var faceEncodingList = faceDataList.Select(t => FaceRecognition.LoadFaceEncoding(t.FaceEncoding)).ToList();
-            var reconizedNames = new List<string>();
+            var reconizedNames = new List<RawFaceDataBase>();
             foreach (var targetFaceData in targetFaceDataList)
             {
                 var targetFaceEncoding = FaceRecognition.LoadFaceEncoding(targetFaceData.FaceEncoding);
@@ -61,8 +61,8 @@ namespace CheckInProject.Core.Implementation
                 {
                     if (recognizedFace)
                     {
-                        var resultName = faceDataList[index].Name;
-                        if (!string.IsNullOrEmpty(resultName)) reconizedNames.Add(resultName);
+                        var resultName = faceDataList[index];
+                        reconizedNames.Add(resultName);
                     }
                     index++;
                 }

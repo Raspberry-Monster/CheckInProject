@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Collections.Generic;
 
 namespace CheckInProject.App
 {
@@ -17,7 +19,6 @@ namespace CheckInProject.App
     {
         public readonly IServiceProvider ServiceProvider;
 
-        public static bool MainWindowOpened = false;
         public static Frame? RootFrame = null;
         public App()
         {
@@ -28,11 +29,14 @@ namespace CheckInProject.App
             service.AddSingleton<StringFaceDataBaseContext>();
             service.AddSingleton<IDatabaseManager, DatabaseManager>();
             service.AddSingleton<IFaceDataManager, FaceDataManager>();
+            service.AddSingleton<List<RawFaceDataBase>>();
             // For UI
             service.AddSingleton<MainWindow>();
             service.AddTransient<ScanStaticPicturePage>();
             service.AddTransient<HistoryPage>();
             service.AddTransient<ScanDynamicPicturePage>();
+            service.AddTransient<FaceDataManagementPage>();
+            service.AddTransient<MultipleResultsPage>();
             ServiceProvider = service.BuildServiceProvider();
         }
         protected override void OnStartup(StartupEventArgs e)

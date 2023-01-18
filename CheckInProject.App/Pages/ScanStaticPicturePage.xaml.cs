@@ -1,8 +1,10 @@
 ﻿using CheckInProject.App.Utils;
 using CheckInProject.Core.Interfaces;
+using CheckInProject.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -23,6 +25,8 @@ namespace CheckInProject.App.Pages
         public IServiceProvider ServiceProvider;
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
         private IDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IDatabaseManager>();
+        private List<RawFaceDataBase> ResultItems => ServiceProvider.GetRequiredService<List<RawFaceDataBase>>();
+
         public string ResultNames
         { 
             get => _resultName;
@@ -68,10 +72,19 @@ namespace CheckInProject.App.Pages
                         var targetFaceEncoding = await Task.Run(()=>FaceRecognitionAPI.CreateFaceData(targetBitmap, ""));
                         var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawFaceDataBase()).ToList());
                         var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
+                        var resultName = string.Empty;
                         if (result.Count > 0)
                         {
-                            ResultNames = result.First();
+                            if (result.Count == 1) resultName = result.First().Name;
+                            else
+                            {
+                                ResultItems.Clear();
+                                ResultItems.AddRange(result);
+                                App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>());
+                            }
                         }
+                        if (string.IsNullOrEmpty(resultName)) resultName = "未识别到已知人脸";
+                        ResultNames = resultName;
                     }
                 }
             }
@@ -93,8 +106,9 @@ namespace CheckInProject.App.Pages
                         var result = await Task.Run(() => FaceRecognitionAPI.CompareFaces(knownFaces, targetFaceEncoding));
                         if (result.Count > 0)
                         {
-                            var resultNames = string.Join("/", result);
-                            ResultNames = resultNames;
+                            var resultNameList = result.Select(t => t.Name).ToList();
+                            var resultNameString = string.Join("/", resultNameList);
+                            ResultNames = resultNameString;
                         }
                     }
                 }

@@ -7,10 +7,11 @@ namespace CheckInProject.Core.Models
     {
         public string? Name { get; set; }
         public required double[] FaceEncoding { get; set; }
+        public uint? PersonID { get; set; }
         public StringFaceDataBase ConvertToStringFaceDataBase()
         {
             var encodingResult = string.Join(";", FaceEncoding.Select(p => p.ToString()).ToArray());
-            return new StringFaceDataBase { FaceEncodingString = encodingResult, Name = Name };            
+            return new StringFaceDataBase { FaceEncodingString = encodingResult, Name = Name, PersonID = PersonID};            
         }
     }
     public class StringFaceDataBase
@@ -18,10 +19,11 @@ namespace CheckInProject.Core.Models
         public string? Name { get; set; }
         [Key]
         public required string FaceEncodingString { get; set; }
+        public uint? PersonID { get; set; }
         public RawFaceDataBase ConvertToRawFaceDataBase()
         {
             var encodingResult = Array.ConvertAll(FaceEncodingString.Split(';'), double.Parse);
-            return new RawFaceDataBase { FaceEncoding= encodingResult, Name = Name };
+            return new RawFaceDataBase { FaceEncoding= encodingResult, Name = Name, PersonID = PersonID};
         }
     }
     
