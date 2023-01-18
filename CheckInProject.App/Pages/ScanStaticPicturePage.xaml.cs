@@ -1,6 +1,6 @@
 ﻿using CheckInProject.App.Utils;
-using CheckInProject.Core.Interfaces;
-using CheckInProject.Core.Models;
+using CheckInProject.PersonDataCore.Interfaces;
+using CheckInProject.PersonDataCore.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using System;
@@ -23,8 +23,8 @@ namespace CheckInProject.App.Pages
     {
         public IServiceProvider ServiceProvider;
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
-        private IDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IDatabaseManager>();
-        private List<RawFaceDataBase> ResultItems => ServiceProvider.GetRequiredService<List<RawFaceDataBase>>();
+        private IPersonDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IPersonDatabaseManager>();
+        private List<RawPersonDataBase> ResultItems => ServiceProvider.GetRequiredService<List<RawPersonDataBase>>();
 
         public string ResultNames
         { 
@@ -69,7 +69,7 @@ namespace CheckInProject.App.Pages
                         var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
                         SourceImage = sourceImage;
                         var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, null, null));
-                        var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawFaceDataBase()).ToList());
+                        var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
                         var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
                         var resultName = string.Empty;
                         if (result.Count > 0)
@@ -101,7 +101,7 @@ namespace CheckInProject.App.Pages
                         var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
                         SourceImage = sourceImage;
                         var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFacesData(targetBitmap));
-                        var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawFaceDataBase()).ToList());
+                        var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
                         var result = await Task.Run(() => FaceRecognitionAPI.CompareFaces(knownFaces, targetFaceEncoding));
                         if (result.Count > 0)
                         {

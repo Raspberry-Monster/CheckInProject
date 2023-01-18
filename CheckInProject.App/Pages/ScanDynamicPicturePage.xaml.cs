@@ -9,10 +9,10 @@ using CheckInProject.App.Utils;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
 using Rect = OpenCvSharp.Rect;
-using CheckInProject.Core.Interfaces;
+using CheckInProject.PersonDataCore.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
-using CheckInProject.Core.Models;
+using CheckInProject.PersonDataCore.Models;
 using System.Collections.Generic;
 
 namespace CheckInProject.App.Pages
@@ -24,8 +24,8 @@ namespace CheckInProject.App.Pages
     {
         private IServiceProvider ServiceProvider;
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
-        private IDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IDatabaseManager>();
-        private List<RawFaceDataBase> ResultItems => ServiceProvider.GetRequiredService<List<RawFaceDataBase>>();
+        private IPersonDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IPersonDatabaseManager>();
+        private List<RawPersonDataBase> ResultItems => ServiceProvider.GetRequiredService<List<RawPersonDataBase>>();
         public BitmapSource SourceImage
         {
             get => _sourceImage;
@@ -105,7 +105,7 @@ namespace CheckInProject.App.Pages
                 CameraMode = false;
                 var targetBitmap = image.ToBitmap();
                     var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, null , null));
-                    var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawFaceDataBase()).ToList());
+                    var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
                     var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
                 var resultName = string.Empty;
                 if (result.Count > 0)

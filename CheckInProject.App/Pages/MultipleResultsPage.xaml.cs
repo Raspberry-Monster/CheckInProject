@@ -1,4 +1,4 @@
-﻿using CheckInProject.Core.Models;
+﻿using CheckInProject.PersonDataCore.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace CheckInProject.App.Pages
     public partial class MultipleResultsPage : Page
     {
         public IServiceProvider ServiceProvider;
-        public List<RawFaceDataBase> ListBoxItems=>ServiceProvider.GetRequiredService<List<RawFaceDataBase>>();
+        public List<RawPersonDataBase> ListBoxItems=>ServiceProvider.GetRequiredService<List<RawPersonDataBase>>();
 
         public MultipleResultsPage(IServiceProvider serviceProvider)
         {

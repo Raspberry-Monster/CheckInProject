@@ -1,10 +1,10 @@
-﻿using CheckInProject.Core.Models;
-using CheckInProject.Core.Interfaces;
+﻿using CheckInProject.PersonDataCore.Models;
+using CheckInProject.PersonDataCore.Interfaces;
 using FaceRecognitionDotNet;
 using System.Drawing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckInProject.Core.Implementation
+namespace CheckInProject.PersonDataCore.Implementation
 {
     public class FaceDataManager : IFaceDataManager
     {
@@ -12,30 +12,30 @@ namespace CheckInProject.Core.Implementation
 
         public IServiceProvider Provider;
 
-        public RawFaceDataBase CreateFaceData(Bitmap sourceData, string? sourceName, uint? personID )
+        public RawPersonDataBase CreateFaceData(Bitmap sourceData, string? sourceName, uint? personID )
         {
             using (var recognitionImage = FaceRecognition.LoadImage(sourceData))
             {
                 var encoding = FaceRecognitionAPI.FaceEncodings(recognitionImage).First().GetRawEncoding();
                 var personName = sourceName;
-                return new RawFaceDataBase { FaceEncoding = encoding, Name = personName ,PersonID = personID};
+                return new RawPersonDataBase { FaceEncoding = encoding, Name = personName ,PersonID = personID};
             }
         }
-        public IList<RawFaceDataBase> CreateFacesData(Bitmap sourceData)
+        public IList<RawPersonDataBase> CreateFacesData(Bitmap sourceData)
         {
             using (var recognitionImage = FaceRecognition.LoadImage(sourceData))
             {
-                var encodings = FaceRecognitionAPI.FaceEncodings(recognitionImage).Select(t => new RawFaceDataBase { FaceEncoding = t.GetRawEncoding() }).ToList();
+                var encodings = FaceRecognitionAPI.FaceEncodings(recognitionImage).Select(t => new RawPersonDataBase { FaceEncoding = t.GetRawEncoding() }).ToList();
                 return encodings;
             }
         }
 
-        public IList<RawFaceDataBase> CompareFace(IList<RawFaceDataBase> faceDataList, RawFaceDataBase targetFaceData)
+        public IList<RawPersonDataBase> CompareFace(IList<RawPersonDataBase> faceDataList, RawPersonDataBase targetFaceData)
         {
             var faceEncodingList = faceDataList.Select(t => FaceRecognition.LoadFaceEncoding(t.FaceEncoding)).ToList();
             var targetFaceEncoding = FaceRecognition.LoadFaceEncoding(targetFaceData.FaceEncoding);
             var recognizedFaces = FaceRecognition.CompareFaces(faceEncodingList, targetFaceEncoding, 0.5);
-            var reconizedNames= new List<RawFaceDataBase>();
+            var reconizedNames= new List<RawPersonDataBase>();
             var index = 0;
             foreach (var recognizedFace in recognizedFaces)
             {
@@ -48,10 +48,10 @@ namespace CheckInProject.Core.Implementation
             }
             return reconizedNames;
         }
-        public IList<RawFaceDataBase> CompareFaces(IList<RawFaceDataBase> faceDataList, IList<RawFaceDataBase> targetFaceDataList)
+        public IList<RawPersonDataBase> CompareFaces(IList<RawPersonDataBase> faceDataList, IList<RawPersonDataBase> targetFaceDataList)
         {
             var faceEncodingList = faceDataList.Select(t => FaceRecognition.LoadFaceEncoding(t.FaceEncoding)).ToList();
-            var reconizedNames = new List<RawFaceDataBase>();
+            var reconizedNames = new List<RawPersonDataBase>();
             foreach (var targetFaceData in targetFaceDataList)
             {
                 var targetFaceEncoding = FaceRecognition.LoadFaceEncoding(targetFaceData.FaceEncoding);

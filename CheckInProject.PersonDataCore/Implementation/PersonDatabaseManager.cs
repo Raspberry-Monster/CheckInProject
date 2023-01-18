@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CheckInProject.Core.Models;
-using CheckInProject.Core.Interfaces;
+using CheckInProject.PersonDataCore.Models;
+using CheckInProject.PersonDataCore.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CheckInProject.Core.Implementation
+namespace CheckInProject.PersonDataCore.Implementation
 {
-    public class DatabaseManager : IDatabaseManager
+    public class PersonDatabaseManager : IPersonDatabaseManager
     {
-        public StringFaceDataBaseContext DatabaseService => Provider.GetRequiredService<StringFaceDataBaseContext>();
+        public StringPersonDataBaseContext DatabaseService => Provider.GetRequiredService<StringPersonDataBaseContext>();
         public IServiceProvider Provider;
-        public IList<StringFaceDataBase> GetFaceData()
+        public IList<StringPersonDataBase> GetFaceData()
         {
             var result = DatabaseService.FaceData.ToList();
             return result;
         }
 
-        public void ImportFaceData(IList<StringFaceDataBase> faceData)
+        public void ImportFaceData(IList<StringPersonDataBase> faceData)
         {
             ClearFaceData();
             DatabaseService.AddRange(faceData);
@@ -35,7 +35,7 @@ namespace CheckInProject.Core.Implementation
             }
         }
 
-        public DatabaseManager(IServiceProvider provider)
+        public PersonDatabaseManager(IServiceProvider provider)
         {
             Provider = provider;
         }

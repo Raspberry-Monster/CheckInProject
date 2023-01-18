@@ -1,6 +1,6 @@
-﻿using CheckInProject.Core.Implementation;
-using CheckInProject.Core.Interfaces;
-using CheckInProject.Core.Models;
+﻿using CheckInProject.PersonDataCore.Implementation;
+using CheckInProject.PersonDataCore.Interfaces;
+using CheckInProject.PersonDataCore.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -46,8 +46,8 @@ namespace CheckInProject.App.Pages
         private string _pathName = string.Empty;
 
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
-        private IDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IDatabaseManager>();
-        public IList<StringFaceDataBase> ListBoxItems => DatabaseAPI.GetFaceData();
+        private IPersonDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IPersonDatabaseManager>();
+        public IList<StringPersonDataBase> ListBoxItems => DatabaseAPI.GetFaceData();
         public FaceDataManagementPage(IServiceProvider serviceProvider)
         {
             ServiceProvider = serviceProvider;
@@ -63,7 +63,7 @@ namespace CheckInProject.App.Pages
 
         private async void CreateFaceDataButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            var faceDataList = new List<RawFaceDataBase>();
+            var faceDataList = new List<RawPersonDataBase>();
             using (var sourcePathSelector = new CommonOpenFileDialog())
             {
                 sourcePathSelector.IsFolderPicker = true;
@@ -89,7 +89,7 @@ namespace CheckInProject.App.Pages
                         }
                     }
                     CurrentName = "正在向数据库导入数据";
-                    var stringFaceDatas = faceDataList.Select(t => t.ConvertToStringFaceDataBase()).ToList();
+                    var stringFaceDatas = faceDataList.Select(t => t.ConvertToStringPersonDataBase()).ToList();
                     DatabaseAPI.ImportFaceData(stringFaceDatas);
                     CurrentName = "导入完成";
                     NotifyPropertyChanged(nameof(ListBoxItems));

@@ -1,7 +1,7 @@
-﻿using CheckInProject.Core.Models;
+﻿using CheckInProject.PersonDataCore.Models;
 using CheckInProject.App.Pages;
-using CheckInProject.Core.Implementation;
-using CheckInProject.Core.Interfaces;
+using CheckInProject.PersonDataCore.Implementation;
+using CheckInProject.PersonDataCore.Interfaces;
 using FaceRecognitionDotNet;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -23,12 +23,12 @@ namespace CheckInProject.App
         {
             var service = new ServiceCollection();
             //For services
-            var faceRecognitionService = FaceRecognition.Create("models");
+            var faceRecognitionService = FaceRecognition.Create("FaceRecognitionModel");
             service.AddSingleton(faceRecognitionService);
-            service.AddSingleton<StringFaceDataBaseContext>();
-            service.AddSingleton<IDatabaseManager, DatabaseManager>();
+            service.AddSingleton<StringPersonDataBaseContext>();
+            service.AddSingleton<IPersonDatabaseManager, PersonDatabaseManager>();
             service.AddSingleton<IFaceDataManager, FaceDataManager>();
-            service.AddSingleton<List<RawFaceDataBase>>();
+            service.AddSingleton<List<RawPersonDataBase>>();
             // For UI
             service.AddSingleton<MainWindow>();
             service.AddTransient<ScanStaticPicturePage>();
