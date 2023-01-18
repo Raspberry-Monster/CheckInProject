@@ -21,9 +21,20 @@ namespace CheckInProject.Core.Implementation
 
         public void ImportFaceData(IList<StringFaceDataBase> faceData)
         {
+            ClearFaceData();
             DatabaseService.AddRange(faceData);
             DatabaseService.SaveChanges();
         }
+
+        public void ClearFaceData()
+        {
+            var currentFaceData = GetFaceData();
+            if (currentFaceData.Count != 0)
+            {
+                DatabaseService.RemoveRange(currentFaceData);
+            }
+        }
+
         public DatabaseManager(IServiceProvider provider)
         {
             Provider = provider;

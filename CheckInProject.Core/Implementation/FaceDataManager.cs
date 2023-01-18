@@ -12,13 +12,13 @@ namespace CheckInProject.Core.Implementation
 
         public IServiceProvider Provider;
 
-        public RawFaceDataBase CreateFaceData(Bitmap sourceData, string? sourceName )
+        public RawFaceDataBase CreateFaceData(Bitmap sourceData, string? sourceName, uint? personID )
         {
             using (var recognitionImage = FaceRecognition.LoadImage(sourceData))
             {
                 var encoding = FaceRecognitionAPI.FaceEncodings(recognitionImage).First().GetRawEncoding();
                 var personName = sourceName;
-                return new RawFaceDataBase { FaceEncoding = encoding, Name = personName };
+                return new RawFaceDataBase { FaceEncoding = encoding, Name = personName ,PersonID = personID};
             }
         }
         public IList<RawFaceDataBase> CreateFacesData(Bitmap sourceData)

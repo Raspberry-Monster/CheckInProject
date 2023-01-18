@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckInProject.Core", "Chec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckInProject.App", "CheckInProject.App\CheckInProject.App.csproj", "{EE17C1B8-5FA2-45A5-9860-C0BCF561AE81}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckInProject.FaceDataCreator", "CheckInProject.FaceDataCreator\CheckInProject.FaceDataCreator.csproj", "{D6A58AED-0F4C-4F89-92FC-823CE88F09E0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -23,10 +21,6 @@ Global
 		{EE17C1B8-5FA2-45A5-9860-C0BCF561AE81}.Debug|x64.Build.0 = Debug|x64
 		{EE17C1B8-5FA2-45A5-9860-C0BCF561AE81}.Release|x64.ActiveCfg = Release|x64
 		{EE17C1B8-5FA2-45A5-9860-C0BCF561AE81}.Release|x64.Build.0 = Release|x64
-		{D6A58AED-0F4C-4F89-92FC-823CE88F09E0}.Debug|x64.ActiveCfg = Debug|x64
-		{D6A58AED-0F4C-4F89-92FC-823CE88F09E0}.Debug|x64.Build.0 = Debug|x64
-		{D6A58AED-0F4C-4F89-92FC-823CE88F09E0}.Release|x64.ActiveCfg = Release|x64
-		{D6A58AED-0F4C-4F89-92FC-823CE88F09E0}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

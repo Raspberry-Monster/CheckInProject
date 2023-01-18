@@ -104,7 +104,7 @@ namespace CheckInProject.App.Pages
                 }
                 CameraMode = false;
                 var targetBitmap = image.ToBitmap();
-                    var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, ""));
+                    var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, null , null));
                     var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawFaceDataBase()).ToList());
                     var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
                 var resultName = string.Empty;

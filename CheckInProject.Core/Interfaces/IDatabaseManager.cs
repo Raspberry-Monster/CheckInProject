@@ -7,6 +7,7 @@ namespace CheckInProject.Core.Interfaces
         public StringFaceDataBaseContext DatabaseService { get; }
         public IList<StringFaceDataBase> GetFaceData();
         public void ImportFaceData(IList<StringFaceDataBase> faceData);
+        public void ClearFaceData();
         
     }
 }

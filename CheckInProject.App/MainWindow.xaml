@@ -45,6 +45,10 @@
                         Content="动态识别"
                         Icon="Accessibility24" Cursor="Hand" />
                     <wpfui:NavigationItem
+                        Click="FaceDataManagementPage_Click"
+                        Content="人脸管理"
+                        Icon="Accessibility24" Cursor="Hand" />
+                    <wpfui:NavigationItem
                         Click="ScanHistoryPage_Click"
                         Content="识别记录"
                         Icon="Storage24" Cursor="Hand" />

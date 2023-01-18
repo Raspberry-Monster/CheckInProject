@@ -11,5 +11,27 @@
       DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBox IsReadOnly="True" x:Name="PathNameTextBox" Text="{Binding PathName, Mode=OneWay}" Grid.Row="0"/>
+        <Grid Grid.Row="1">
+            <TextBlock Text="{Binding CurrentName, Mode=OneWay}" HorizontalAlignment="Left"/>
+            <Button Content="创建人脸数据" x:Name="CreateFaceDataButton" Click="CreateFaceDataButton_Click" HorizontalAlignment="Right"/>
+        </Grid>
+        <ListBox x:Name="NamesListBox" ItemsSource="{Binding ListBoxItems, Mode=OneWay}" Grid.Row="2">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="姓名："/>
+                        <TextBlock Text="{Binding Name, Mode=OneWay}"/>
+                        <TextBlock Text=" 序号："/>
+                        <TextBlock Text="{Binding PersonID, Mode=OneWay}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </Page>
