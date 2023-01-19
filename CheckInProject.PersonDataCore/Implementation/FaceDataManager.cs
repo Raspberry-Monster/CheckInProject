@@ -12,7 +12,7 @@ namespace CheckInProject.PersonDataCore.Implementation
 
         public IServiceProvider Provider;
 
-        public RawPersonDataBase CreateFaceData(Bitmap sourceData, string? sourceName, uint? personID )
+        public RawPersonDataBase CreateFaceData(Bitmap sourceData, string? sourceName, uint? personID, bool isCheckingIn = false)
         {
             using (var recognitionImage = FaceRecognition.LoadImage(sourceData))
             {

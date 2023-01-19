@@ -68,11 +68,14 @@ namespace CheckInProject.App.Pages
         }
         public async void CaptureVideo()
         {
-            using (var capture = new VideoCapture(0))
+            using (var capture = new VideoCapture(0,VideoCaptureAPIs.DSHOW))
             {
                 var capturedTime = 0;
                 if (!capture.IsOpened())
+                {
                     return;
+                }
+                    
                 var image = new Mat();
                 CascadeClassifier cascade = new CascadeClassifier("haarcascade_frontalface_alt.xml");
                 while (CameraMode && capturedTime < 15)

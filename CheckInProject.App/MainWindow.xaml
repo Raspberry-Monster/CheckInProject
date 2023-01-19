@@ -49,8 +49,12 @@
                         Content="人脸管理"
                         Icon="Accessibility24" Cursor="Hand" />
                     <wpfui:NavigationItem
-                        Click="ScanHistoryPage_Click"
+                        Click="CheckInRecordsPage_Click"
                         Content="识别记录"
+                        Icon="Storage24" Cursor="Hand" />
+                    <wpfui:NavigationItem
+                        Click="UncheckedPeoplePage_Click"
+                        Content="未打卡记录"
                         Icon="Storage24" Cursor="Hand" />
                 </wpfui:NavigationStore.Items>
             </wpfui:NavigationStore>

@@ -31,9 +31,14 @@ namespace CheckInProject.App
             RootFrame.Navigate(ServiceProvider.GetRequiredService<FaceDataManagementPage>());
         }
 
-        private void ScanHistoryPage_Click(object sender, RoutedEventArgs e)
+        private void CheckInRecordsPage_Click(object sender, RoutedEventArgs e)
         {
-            RootFrame.Navigate(ServiceProvider.GetRequiredService<HistoryPage>());
+            RootFrame.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
+        }
+
+        private void UncheckedPeoplePage_Click(object sender, RoutedEventArgs e)
+        {
+            RootFrame.Navigate(ServiceProvider.GetRequiredService<UncheckedPeoplePage>());
         }
     }
 }

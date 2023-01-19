@@ -78,13 +78,22 @@ namespace CheckInProject.CheckInCore.Implementation
             }
         }
 
-        public List<CheckInDataModels> ShowData()
+        public List<CheckInDataModels> ShowTodayRecords()
         {
-            var result = CheckInDatabaseService.CheckInData.ToList();
+            var result = CheckInDatabaseService.CheckInData.AsEnumerable().Where(t => t.CheckInDate == DateOnly.FromDateTime(DateTime.Now)).ToList();
             return result;
         }
+        public List<StringPersonDataBase> ShowTodayUncheckedRecords()
+        {
+            var checkedInRecordsPersonID = CheckInDatabaseService.CheckInData.AsEnumerable()
+                    .Where(t => t.CheckInDate == DateOnly.FromDateTime(DateTime.Now)).Select(t => t.PersonID).ToList();
+            var checkedPeople = PersonDatabaseService.PersonData.AsEnumerable().Where(t => checkedInRecordsPersonID.Contains(t.PersonID)).ToList();
+            var uncheckedPeople = PersonDatabaseService.PersonData.AsEnumerable().ToList();
+            checkedPeople.ForEach(t => uncheckedPeople.Remove(t));
+            return uncheckedPeople;
+        }
 
-        public void ExportDataToExcelFile()
+        public void ExportRecordsToExcelFile()
         {
             throw new NotImplementedException();
         }

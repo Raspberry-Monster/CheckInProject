@@ -25,11 +25,12 @@ namespace CheckInProject.App
         public App()
         {
             var service = new ServiceCollection();
+            //For Databases
+            service.AddDbContext<StringPersonDataBaseContext>();
+            service.AddDbContext<CheckInDataModelContext>();
             //For services
             var faceRecognitionService = FaceRecognition.Create("FaceRecognitionModel");
             service.AddSingleton(faceRecognitionService);
-            service.AddSingleton<StringPersonDataBaseContext>();
-            service.AddSingleton<CheckInDataModelContext>();
             service.AddSingleton<IPersonDatabaseManager, PersonDatabaseManager>();
             service.AddSingleton<ICheckInManager, CheckInManager>();
             service.AddSingleton<IFaceDataManager, FaceDataManager>();
@@ -37,10 +38,11 @@ namespace CheckInProject.App
             // For UI
             service.AddSingleton<MainWindow>();
             service.AddTransient<ScanStaticPicturePage>();
-            service.AddTransient<HistoryPage>();
+            service.AddTransient<CheckInRecordsPage>();
             service.AddTransient<ScanDynamicPicturePage>();
             service.AddTransient<FaceDataManagementPage>();
             service.AddTransient<MultipleResultsPage>();
+            service.AddTransient<UncheckedPeoplePage>();
             ServiceProvider = service.BuildServiceProvider();
         }
         protected override void OnStartup(StartupEventArgs e)

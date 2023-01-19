@@ -15,7 +15,7 @@ namespace CheckInProject.CheckInCore.Models
         public string? Name { get; set; }
         public uint? PersonID { get; set; }
         [Key]
-        public  Guid RecordID { get; set; }
+        public Guid RecordID { get; set; }
         public bool MorningCheckedIn { get; set; } = false;
         public TimeOnly? MorningCheckInTime { get; set; }
         public bool AfternoonCheckedIn { get; set; } = false;
