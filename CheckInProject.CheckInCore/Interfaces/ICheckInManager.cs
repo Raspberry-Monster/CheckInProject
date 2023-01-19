@@ -11,8 +11,9 @@ namespace CheckInProject.CheckInCore.Interfaces
     public interface ICheckInManager
     {
         public Task<bool> CheckIn(DateOnly currentDate, TimeOnly currentTime, uint? personId);
-        public List<CheckInDataModels> ShowTodayRecords();
-        public List<StringPersonDataBase> ShowTodayUncheckedRecords();
-        public void ExportRecordsToExcelFile();
+        public List<CheckInDataModels> QueryTodayRecords();
+        public List<StringPersonDataBase> QueryTodayUncheckedRecords();
+        public void ExportRecordsToExcelFile(ExportTypeEnum exportType,string path);
+        public void ClearCheckInRecords();
     }
 }

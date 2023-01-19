@@ -27,12 +27,13 @@ namespace CheckInProject.PersonDataCore.Implementation
             await DatabaseService.SaveChangesAsync();
         }
 
-        public void ClearFaceData()
+        public async void ClearFaceData()
         {
             var currentFaceData = GetFaceData();
             if (currentFaceData.Count != 0)
             {
                 DatabaseService.RemoveRange(currentFaceData);
+                await DatabaseService.SaveChangesAsync();
             }
         }
 

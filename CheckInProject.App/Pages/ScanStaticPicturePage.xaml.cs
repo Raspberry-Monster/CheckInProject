@@ -79,7 +79,12 @@ namespace CheckInProject.App.Pages
                             if (result.Count == 1)
                             {
                                 resultName = result.First().Name;
+                                if (string.IsNullOrEmpty(resultName)) resultName = "未识别到已知人脸";
+                                ResultNames = resultName ?? string.Empty;
                                 await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().PersonID);
+                                await Task.Delay(1500);
+                                App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
+
                             }
                             else
                             {
@@ -88,8 +93,10 @@ namespace CheckInProject.App.Pages
                                 App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>());
                             }
                         }
-                        if (string.IsNullOrEmpty(resultName)) resultName = "未识别到已知人脸";
-                        ResultNames = resultName;
+                        else
+                        {
+                            ResultNames = "未识别到已知人脸";
+                        }
                     }
                 }
             }
@@ -104,6 +111,7 @@ namespace CheckInProject.App.Pages
                 {
                     using (var targetBitmap = new Bitmap(targetFile))
                     {
+                        var resultNameString = string.Empty;
                         var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
                         SourceImage = sourceImage;
                         var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFacesData(targetBitmap));
@@ -112,7 +120,15 @@ namespace CheckInProject.App.Pages
                         if (result.Count > 0)
                         {
                             var resultNameList = result.Select(t => t.Name).ToList();
-                            var resultNameString = string.Join("/", resultNameList);
+                            resultNameString = string.Join("/", resultNameList);
+                            result.Select(t => t.PersonID).ToList().ForEach(async t => await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), t));
+                            ResultNames = resultNameString;
+                            await Task.Delay(1500);
+                            App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
+                        }
+                        else
+                        {
+                            resultNameString = "未识别到已知人脸";
                             ResultNames = resultNameString;
                         }
                     }

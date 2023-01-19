@@ -12,20 +12,20 @@ namespace CheckInProject.PersonDataCore.Implementation
 
         public IServiceProvider Provider;
 
-        public RawPersonDataBase CreateFaceData(Bitmap sourceData, string? sourceName, uint? personID, bool isCheckingIn = false)
+        public RawPersonDataBase CreateFaceData(Bitmap sourceData, string? sourceName, uint? personID)
         {
             using (var recognitionImage = FaceRecognition.LoadImage(sourceData))
             {
                 var encoding = FaceRecognitionAPI.FaceEncodings(recognitionImage).First().GetRawEncoding();
                 var personName = sourceName;
-                return new RawPersonDataBase { FaceEncoding = encoding, Name = personName ,PersonID = personID, RecordID = Guid.NewGuid()};
+                return new RawPersonDataBase { FaceEncoding = encoding, Name = personName ,PersonID = personID};
             }
         }
         public IList<RawPersonDataBase> CreateFacesData(Bitmap sourceData)
         {
             using (var recognitionImage = FaceRecognition.LoadImage(sourceData))
             {
-                var encodings = FaceRecognitionAPI.FaceEncodings(recognitionImage).Select(t => new RawPersonDataBase { FaceEncoding = t.GetRawEncoding(), RecordID = Guid.Empty}).ToList();
+                var encodings = FaceRecognitionAPI.FaceEncodings(recognitionImage).Select(t => new RawPersonDataBase { FaceEncoding = t.GetRawEncoding()}).ToList();
                 return encodings;
             }
         }

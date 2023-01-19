@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.2" />
+    <PackageReference Include="MiniExcel" Version="1.30.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,13 +2,8 @@
 using CheckInProject.CheckInCore.Models;
 using CheckInProject.CheckInCore.Utils;
 using CheckInProject.PersonDataCore.Models;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MiniExcelLibs;
 
 namespace CheckInProject.CheckInCore.Implementation
 {
@@ -78,24 +73,56 @@ namespace CheckInProject.CheckInCore.Implementation
             }
         }
 
-        public List<CheckInDataModels> ShowTodayRecords()
+        public List<CheckInDataModels> QueryTodayRecords()
         {
             var result = CheckInDatabaseService.CheckInData.AsEnumerable().Where(t => t.CheckInDate == DateOnly.FromDateTime(DateTime.Now)).ToList();
             return result;
         }
-        public List<StringPersonDataBase> ShowTodayUncheckedRecords()
+        public List<StringPersonDataBase> QueryTodayUncheckedRecords()
         {
-            var checkedInRecordsPersonID = CheckInDatabaseService.CheckInData.AsEnumerable()
-                    .Where(t => t.CheckInDate == DateOnly.FromDateTime(DateTime.Now)).Select(t => t.PersonID).ToList();
-            var checkedPeople = PersonDatabaseService.PersonData.AsEnumerable().Where(t => checkedInRecordsPersonID.Contains(t.PersonID)).ToList();
+            var todaycheckInRecords = CheckInDatabaseService.CheckInData.AsEnumerable().Where(t => t.CheckInDate == DateOnly.FromDateTime(DateTime.Now)).ToList();
+            IList<uint?> currentTimeCheckedInRecords;
+            var currentTimeDescription = TimeConverter.ConvertTimeToDescription(TimeOnly.FromDateTime(DateTime.Now));
+            switch (currentTimeDescription)
+            {
+                case TimeEnum.Morning:
+                    currentTimeCheckedInRecords = todaycheckInRecords.Where(t=>t.MorningCheckedIn== true).Select(t=>t.PersonID).ToList();
+                    break;
+                case TimeEnum.Afternoon:
+                    currentTimeCheckedInRecords = todaycheckInRecords.Where(t => t.AfternoonCheckedIn == true).Select(t => t.PersonID).ToList();
+                    break;
+                case TimeEnum.Evening:
+                    currentTimeCheckedInRecords = todaycheckInRecords.Where(t => t.EveningCheckedIn == true).Select(t => t.PersonID).ToList();
+                    break;
+                default:
+                    currentTimeCheckedInRecords = new List<uint?>();
+                    break;
+            }
+            var checkedPeople = PersonDatabaseService.PersonData.AsEnumerable().Where(t => currentTimeCheckedInRecords.Contains(t.PersonID)).ToList();
             var uncheckedPeople = PersonDatabaseService.PersonData.AsEnumerable().ToList();
             checkedPeople.ForEach(t => uncheckedPeople.Remove(t));
             return uncheckedPeople;
         }
 
-        public void ExportRecordsToExcelFile()
+        public void ExportRecordsToExcelFile(ExportTypeEnum exportType, string path)
         {
-            throw new NotImplementedException();
+            if (exportType == ExportTypeEnum.UncheckedIn)
+            {
+                var uncheckedInData = QueryTodayUncheckedRecords();
+                MiniExcel.SaveAsAsync(path, uncheckedInData);
+            }
+            else
+            {
+                var checkedInData = QueryTodayRecords();
+                MiniExcel.SaveAsAsync(path, checkedInData);
+            }
+        }
+
+        public async void ClearCheckInRecords()
+        {
+            var currentCheckInRecords = CheckInDatabaseService.CheckInData.ToList();
+            CheckInDatabaseService.RemoveRange(currentCheckInRecords);
+            await CheckInDatabaseService.SaveChangesAsync();
         }
     }
 }

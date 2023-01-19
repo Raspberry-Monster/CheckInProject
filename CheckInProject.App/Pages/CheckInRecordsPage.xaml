@@ -10,23 +10,51 @@
       DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
     <Grid>
-        <ListBox x:Name="NamesListBox" ItemsSource="{Binding ListBoxItems, Mode=OneWay}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListBox x:Name="NamesListBox" ItemsSource="{Binding ListBoxItems, Mode=OneWay}" Grid.Row="0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="姓名："/>
-                            <TextBlock Text="{Binding Name, Mode=OneWay}"/>
-                            <TextBlock Text=" 序号："/>
-                            <TextBlock Text="{Binding PersonID, Mode=OneWay}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="日期"/>
-                            <TextBlock Text="{Binding CheckInDate}"/>
-                        </StackPanel>
-                    </StackPanel>
+                    <Border>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="姓名: " Grid.Row="0" Grid.Column="0" FontSize="15"/>
+                            <TextBlock Text="{Binding Name, Mode=OneWay}" Grid.Row="0" Grid.Column="1" FontSize="15"/>
+                            <TextBlock Text="学号: " Grid.Row="0" Grid.Column="2" FontSize="15"/>
+                            <TextBlock Text="{Binding PersonID, Mode=OneWay}" Grid.Row="0" Grid.Column="3" FontSize="15"/>
+                            <TextBlock Text="上午打卡状态: " Grid.Row="1" Grid.Column="0" FontSize="15"/>
+                            <TextBlock Text="{Binding MorningCheckedIn, Mode=OneWay}" Grid.Row="1" Grid.Column="1" FontSize="15"/>
+                            <TextBlock Text="上午打卡时间: " Grid.Row="1" Grid.Column="2" FontSize="15"/>
+                            <TextBlock Text="{Binding MorningCheckInTime, Mode=OneWay}" Grid.Row="1" Grid.Column="3" FontSize="15"/>
+                            <TextBlock Text="下午打卡状态: " Grid.Row="2" Grid.Column="0" FontSize="15"/>
+                            <TextBlock Text="{Binding AfternoonCheckedIn, Mode=OneWay}" Grid.Row="2" Grid.Column="1" FontSize="15"/>
+                            <TextBlock Text="下午打卡时间: " Grid.Row="2" Grid.Column="2" FontSize="15"/>
+                            <TextBlock Text="{Binding AfternoonCheckInTime, Mode=OneWay}" Grid.Row="2" Grid.Column="3" FontSize="15"/>
+                            <TextBlock Text="晚上打卡状态: " Grid.Row="3" Grid.Column="0" FontSize="15"/>
+                            <TextBlock Text="{Binding EveningCheckedIn, Mode=OneWay}" Grid.Row="3" Grid.Column="1" FontSize="15"/>
+                            <TextBlock Text="晚上打卡时间: " Grid.Row="3" Grid.Column="2" FontSize="15"/>
+                            <TextBlock Text="{Binding EveningCheckInTime, Mode=OneWay}" Grid.Row="3" Grid.Column="3" FontSize="15"/>
+                            <TextBlock Text="打卡日期: " Grid.Row="4" Grid.Column="0" FontSize="15"/>
+                            <TextBlock Text="{Binding CheckInDate, Mode=OneWay}" Grid.Row="4" Grid.Column="1" FontSize="15"/>
+                        </Grid>
+                    </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <Button x:Name="ExportCheckInDataToExcelFile" Content="导出记录至Excel文件" Click="ExportCheckInDataToExcelFile_Click" Grid.Row="1" HorizontalAlignment="Right"/>
     </Grid>
 </Page>

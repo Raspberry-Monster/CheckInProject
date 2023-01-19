@@ -1,4 +1,5 @@
-﻿using CheckInProject.PersonDataCore.Implementation;
+﻿using CheckInProject.CheckInCore.Interfaces;
+using CheckInProject.PersonDataCore.Implementation;
 using CheckInProject.PersonDataCore.Interfaces;
 using CheckInProject.PersonDataCore.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,6 +48,7 @@ namespace CheckInProject.App.Pages
 
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
         private IPersonDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IPersonDatabaseManager>();
+        private ICheckInManager CheckInManager =>ServiceProvider.GetRequiredService<ICheckInManager>();
         public IList<StringPersonDataBase> ListBoxItems => DatabaseAPI.GetFaceData();
         public FaceDataManagementPage(IServiceProvider serviceProvider)
         {
@@ -89,6 +91,7 @@ namespace CheckInProject.App.Pages
                         }
                     }
                     CurrentName = "正在向数据库导入数据";
+                    CheckInManager.ClearCheckInRecords();
                     var stringFaceDatas = faceDataList.Select(t => t.ConvertToStringPersonDataBase()).ToList();
                     DatabaseAPI.ImportFaceData(stringFaceDatas);
                     CurrentName = "导入完成";

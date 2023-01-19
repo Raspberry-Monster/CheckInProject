@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using CheckInProject.PersonDataCore.Models;
 using System.Collections.Generic;
+using CheckInProject.CheckInCore.Interfaces;
 
 namespace CheckInProject.App.Pages
 {
@@ -24,7 +25,8 @@ namespace CheckInProject.App.Pages
     {
         private IServiceProvider ServiceProvider;
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
-        private IPersonDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IPersonDatabaseManager>();
+        private IPersonDatabaseManager PersonDatabaseAPI => ServiceProvider.GetRequiredService<IPersonDatabaseManager>();
+        private ICheckInManager CheckInManager => ServiceProvider.GetRequiredService<ICheckInManager>();
         private List<RawPersonDataBase> ResultItems => ServiceProvider.GetRequiredService<List<RawPersonDataBase>>();
         public BitmapSource SourceImage
         {
@@ -108,12 +110,19 @@ namespace CheckInProject.App.Pages
                 CameraMode = false;
                 var targetBitmap = image.ToBitmap();
                     var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, null , null));
-                    var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
+                    var knownFaces = await Task.Run(() => PersonDatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
                     var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
                 var resultName = string.Empty;
                 if (result.Count > 0)
                 {
-                    if (result.Count == 1) resultName = result.First().Name;
+                    if (result.Count == 1) 
+                    {
+                        resultName = result.First().Name;
+                        ResultNames = resultName ?? string.Empty;
+                        await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().PersonID);
+                        await Task.Delay(1500);
+                        Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>()));
+                    } 
                     else
                     {
                         ResultItems.Clear();
@@ -121,8 +130,8 @@ namespace CheckInProject.App.Pages
                         Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>()));
                     }
                 }
-                if (string.IsNullOrEmpty(resultName)) resultName = "未识别到已知人脸";
-                ResultNames = resultName;
+                if (string.IsNullOrEmpty(resultName)) ResultNames = "未识别到已知人脸";
+                
                 image.Dispose();
             }
         }

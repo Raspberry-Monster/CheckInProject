@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MiniExcelLibs.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,7 +10,7 @@ namespace CheckInProject.PersonDataCore.Models
         public string? Name { get; set; }
         public required double[] FaceEncoding { get; set; }
         public uint? PersonID { get; set; }
-        public required Guid RecordID { get; set; }
+        public Guid RecordID { get; set; }
         public StringPersonDataBase ConvertToStringPersonDataBase()
         {
             var encodingResult = string.Join(";", FaceEncoding.Select(p => p.ToString()).ToArray());
@@ -18,11 +19,15 @@ namespace CheckInProject.PersonDataCore.Models
     }
     public class StringPersonDataBase
     {
+        [ExcelColumnName("学生姓名")]
         public string? Name { get; set; }
+        [ExcelIgnore]
         public required string FaceEncodingString { get; set; }
+        [ExcelColumnName("学号")]
         public uint? PersonID { get; set; }
+        [ExcelIgnore]
         [Key]
-        public required Guid RecordID { get; set; }
+        public Guid RecordID { get; set; }
         public RawPersonDataBase ConvertToRawPersonDataBase()
         {
             var encodingResult = Array.ConvertAll(FaceEncodingString.Split(';'), double.Parse);
