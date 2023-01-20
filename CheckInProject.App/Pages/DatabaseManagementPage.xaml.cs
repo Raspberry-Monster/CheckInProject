@@ -37,19 +37,33 @@ namespace CheckInProject.App.Pages
 
         private async void ClearFaceDataDatabase_Click(object sender, RoutedEventArgs e)
         {
-            var messageBoxResult = MessageBox.Show("您确定要清空人脸数据库吗? 此操作不可恢复", "信息", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (messageBoxResult == MessageBoxResult.Yes)
+            try
             {
-                await FaceDatabaseAPI.ClearFaceData();
+                var messageBoxResult = MessageBox.Show("您确定要清空人脸数据库吗? 此操作不可恢复", "信息", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    await FaceDatabaseAPI.ClearFaceData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private async void ClearCheckInDatabase_Click(object sender, RoutedEventArgs e)
         {
-            var messageBoxResult = MessageBox.Show("您确定要清空打卡数据库吗? 此操作不可恢复", "信息", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (messageBoxResult == MessageBoxResult.Yes)
+            try
             {
-                await CheckInManager.ClearCheckInRecords();
+                var messageBoxResult = MessageBox.Show("您确定要清空打卡数据库吗? 此操作不可恢复", "信息", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    await CheckInManager.ClearCheckInRecords();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
