@@ -43,6 +43,7 @@ namespace CheckInProject.App
             service.AddTransient<FaceDataManagementPage>();
             service.AddTransient<MultipleResultsPage>();
             service.AddTransient<UncheckedPeoplePage>();
+            service.AddTransient<DatabaseManagementPage>();
             ServiceProvider = service.BuildServiceProvider();
         }
         protected override void OnStartup(StartupEventArgs e)

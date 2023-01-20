@@ -46,5 +46,9 @@ namespace CheckInProject.App
         {
             RootFrame.Navigate(ServiceProvider.GetRequiredService<UncheckedPeoplePage>());
         }
+        private void DatabaseManagementPage_Click(object sender, RoutedEventArgs e)
+        {
+            RootFrame.Navigate(ServiceProvider.GetRequiredService<DatabaseManagementPage>());
+        }
     }
 }
