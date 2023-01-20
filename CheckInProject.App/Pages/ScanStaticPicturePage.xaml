@@ -19,12 +19,13 @@
         </Grid.RowDefinitions>
         <Image Grid.Row="0" Source="{Binding SourceImage}" />
         <TextBlock Grid.Row="1" Text="{Binding ResultNames,Mode=OneWay}" FontSize="15" HorizontalAlignment="Center" />
-        <Grid Grid.Row="2">
-            <TextBlock Text="静态识别页" HorizontalAlignment="Left" FontSize="15"/>
-            <Grid HorizontalAlignment="Right">
-                <Button x:Name="CompareSingleFaceButton" Click="CompareSingleFace_Click" Content="打开并比对单人照片文件"/>
-                <Button x:Name="CompareMultipleFacesButton" Click="CompareMultipleFaces_Click" Content="打开并比对多人照片文件" Margin="180,0,0,0"/>
-            </Grid>
+        <Grid Grid.Row="2" HorizontalAlignment="Right">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="CompareSingleFaceButton" Click="CompareSingleFace_Click" Content="打开并比对单人照片文件" Grid.Column="0"/>
+            <Button x:Name="CompareMultipleFacesButton" Click="CompareMultipleFaces_Click" Content="打开并比对多人照片文件" Grid.Column="1"/>
         </Grid>
     </Grid>
 </Page>

@@ -37,9 +37,9 @@ namespace CheckInProject.App
             service.AddSingleton<List<RawPersonDataBase>>();
             // For UI
             service.AddSingleton<MainWindow>();
-            service.AddTransient<ScanStaticPicturePage>();
+            service.AddSingleton<ScanStaticPicturePage>();
             service.AddTransient<CheckInRecordsPage>();
-            service.AddTransient<ScanDynamicPicturePage>();
+            service.AddSingleton<ScanDynamicPicturePage>();
             service.AddTransient<FaceDataManagementPage>();
             service.AddTransient<MultipleResultsPage>();
             service.AddTransient<UncheckedPeoplePage>();

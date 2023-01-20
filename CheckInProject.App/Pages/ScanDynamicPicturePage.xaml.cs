@@ -15,6 +15,7 @@ using System.Linq;
 using CheckInProject.PersonDataCore.Models;
 using System.Collections.Generic;
 using CheckInProject.CheckInCore.Interfaces;
+using CheckInProject.App.Models;
 
 namespace CheckInProject.App.Pages
 {
@@ -39,15 +40,16 @@ namespace CheckInProject.App.Pages
         }
         private BitmapSource _sourceImage = new BitmapImage();
 
-        private bool CameraMode = false;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public ScanDynamicPicturePage(IServiceProvider serviceProvider)
+        public List<CameraDevice> CameraDevices
         {
-            ServiceProvider = serviceProvider;
-            InitializeComponent();
+            get => _cameraDevices;
+            set
+            {
+                _cameraDevices = value;
+                NotifyPropertyChanged();
+            }
         }
+        private List<CameraDevice> _cameraDevices = new List<CameraDevice>();
 
         public string ResultNames
         {
@@ -60,19 +62,38 @@ namespace CheckInProject.App.Pages
         }
         private string _resultName = string.Empty;
 
+        private bool CameraMode = false;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public ScanDynamicPicturePage(IServiceProvider serviceProvider)
+        {
+            ServiceProvider = serviceProvider;
+            CameraDevices = CameraDeviceEnumerator.EnumerateCameras();
+            InitializeComponent();
+        }
         private void StartCaptureButton_Click(object sender, RoutedEventArgs e)
         {
             CameraMode = !CameraMode;
-            if (CameraMode) 
+            if (CameraMode)
             {
-                Task.Run(CaptureVideo);
+                if (CameraSelector.SelectedIndex != -1)
+                {
+                    var selectedCamera = CameraSelector.SelectedIndex;
+                    Task.Run(() => CaptureVideo(selectedCamera));
+                }
+                else
+                {
+                    MessageBox.Show("请选择需要调用的摄像头", "信息", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
         }
-        public async void CaptureVideo()
+
+        public async void CaptureVideo(int cameraIndex)
         {
             try
             {
-                using (var capture = new VideoCapture(0, VideoCaptureAPIs.DSHOW))
+                using (var capture = new VideoCapture(cameraIndex, VideoCaptureAPIs.DSHOW))
                 {
                     var capturedTime = 0;
                     if (!capture.IsOpened())
@@ -139,7 +160,7 @@ namespace CheckInProject.App.Pages
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             
         }

@@ -19,10 +19,15 @@
         <Image Grid.Row="0" Source="{Binding SourceImage}" />
         <TextBlock Grid.Row="1" Text="{Binding ResultNames,Mode=OneWay}" FontSize="15" HorizontalAlignment="Center" />
         <Grid Grid.Row="2">
-            <TextBlock Text="动态识别页" HorizontalAlignment="Left" FontSize="15"/>
-            <Grid HorizontalAlignment="Right">
-                <Button x:Name="StartCaptureButton" Content="打开摄像头并比对最近人脸" Click="StartCaptureButton_Click"/>
-            </Grid>
+            <TextBlock Text="摄像头选择: " HorizontalAlignment="Left" FontSize="20"/>
+            <ComboBox x:Name="CameraSelector" ItemsSource="{Binding Path=CameraDevices, Mode=OneWay}" HorizontalAlignment="Center">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding CameraName}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button x:Name="StartCaptureButton" Content="打开摄像头并比对最近人脸" Click="StartCaptureButton_Click" HorizontalAlignment="Right"/>
         </Grid>
     </Grid>
 </Page>

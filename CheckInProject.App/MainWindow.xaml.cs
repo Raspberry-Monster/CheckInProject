@@ -1,6 +1,7 @@
 ﻿using CheckInProject.App.Pages;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 using System.Windows;
 
 namespace CheckInProject.App
@@ -14,6 +15,11 @@ namespace CheckInProject.App
         public MainWindow(IServiceProvider provider)
         {
             InitializeComponent();
+            if (!File.Exists("PersonData.db") || !File.Exists("CheckInData.db"))
+            {
+                MessageBox.Show("程序文件损坏，请重新解压。", "灾难性故障", MessageBoxButton.OK, MessageBoxImage.Error);
+                App.Current.Shutdown();
+            }
             ServiceProvider = provider;
             App.RootFrame = RootFrame;
         }
