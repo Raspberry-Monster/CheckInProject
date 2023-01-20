@@ -7,7 +7,7 @@
         xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:pages="clr-namespace:CheckInProject.App.Pages"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Style="{StaticResource UiWindow}">
+        Style="{StaticResource UiWindow}" Icon="/Icon.png">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

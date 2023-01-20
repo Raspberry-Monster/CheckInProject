@@ -7,7 +7,17 @@
     <UseWPF>true</UseWPF>
     <Platforms>x64</Platforms>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Icon.ico" />
+    <None Remove="Icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Icon.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="DirectShowLib.Standard" Version="2.1.0" />
@@ -23,6 +33,11 @@
   <ItemGroup>
     <ProjectReference Include="..\CheckInProject.CheckInCore\CheckInProject.CheckInCore.csproj" />
     <ProjectReference Include="..\CheckInProject.PersonDataCore\CheckInProject.PersonDataCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icon.ico" />
+    <Resource Include="Icon.png" />
   </ItemGroup>
 
   <ItemGroup>
