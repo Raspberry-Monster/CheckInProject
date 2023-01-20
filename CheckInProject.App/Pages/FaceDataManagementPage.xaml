@@ -24,12 +24,20 @@
         <ListBox x:Name="NamesListBox" ItemsSource="{Binding ListBoxItems, Mode=OneWay}" Grid.Row="2">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="姓名："/>
-                        <TextBlock Text="{Binding Name, Mode=OneWay}"/>
-                        <TextBlock Text=" 序号："/>
-                        <TextBlock Text="{Binding PersonID, Mode=OneWay}"/>
-                    </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="姓名：" Grid.Row="0" Grid.Column="0"/>
+                        <TextBlock Text="{Binding Name, Mode=OneWay}" Grid.Row="0" Grid.Column="1"/>
+                        <TextBlock Text="学号：" Grid.Row="1" Grid.Column="0"/>
+                        <TextBlock Text="{Binding PersonID, Mode=OneWay}" Grid.Row="1" Grid.Column="1"/>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
