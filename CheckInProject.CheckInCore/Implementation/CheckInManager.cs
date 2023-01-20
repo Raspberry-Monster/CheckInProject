@@ -78,12 +78,12 @@ namespace CheckInProject.CheckInCore.Implementation
             var result = CheckInDatabaseService.CheckInData.AsEnumerable().Where(t => t.CheckInDate == DateOnly.FromDateTime(DateTime.Now)).ToList();
             return result;
         }
-        public List<StringPersonDataBase> QueryTodayUncheckedRecords()
+        public List<StringPersonDataBase> QueryRequestedTimeUncheckedRecords(TimeEnum ?targetTime)
         {
             var todaycheckInRecords = CheckInDatabaseService.CheckInData.AsEnumerable().Where(t => t.CheckInDate == DateOnly.FromDateTime(DateTime.Now)).ToList();
             IList<uint?> currentTimeCheckedInRecords;
-            var currentTimeDescription = TimeConverter.ConvertTimeToDescription(TimeOnly.FromDateTime(DateTime.Now));
-            switch (currentTimeDescription)
+            if (targetTime==null) targetTime= TimeConverter.ConvertTimeToDescription(TimeOnly.FromDateTime(DateTime.Now));
+            switch (targetTime)
             {
                 case TimeEnum.Morning:
                     currentTimeCheckedInRecords = todaycheckInRecords.Where(t=>t.MorningCheckedIn== true).Select(t=>t.PersonID).ToList();
@@ -104,17 +104,17 @@ namespace CheckInProject.CheckInCore.Implementation
             return uncheckedPeople;
         }
 
-        public void ExportRecordsToExcelFile(ExportTypeEnum exportType, string path)
+        public async Task ExportRecordsToExcelFile(ExportTypeEnum exportType, string path, TimeEnum ?targetTime = null)
         {
             if (exportType == ExportTypeEnum.UncheckedIn)
             {
-                var uncheckedInData = QueryTodayUncheckedRecords();
-                MiniExcel.SaveAsAsync(path, uncheckedInData);
+                var uncheckedInData = QueryRequestedTimeUncheckedRecords(targetTime);
+                await MiniExcel.SaveAsAsync(path, uncheckedInData, overwriteFile:true);
             }
             else
             {
                 var checkedInData = QueryTodayRecords();
-                MiniExcel.SaveAsAsync(path, checkedInData);
+                await MiniExcel.SaveAsAsync(path, checkedInData, overwriteFile: true);
             }
         }
 

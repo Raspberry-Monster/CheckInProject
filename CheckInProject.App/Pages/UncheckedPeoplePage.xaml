@@ -11,10 +11,23 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ListBox x:Name="NamesListBox" ItemsSource="{Binding ListBoxItems, Mode=OneWay}" Grid.Row="0">
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="查询时段: " FontSize="15" Grid.Row="0"/>
+            <ComboBox IsReadOnly="True" Name="QueryDuration" Grid.Row="1" SelectionChanged="QueryDuration_SelectionChanged">
+                <ComboBoxItem Content="早上"/>
+                <ComboBoxItem Content="下午"/>
+                <ComboBoxItem Content="晚上"/>
+            </ComboBox>
+        </Grid>
+        <ListBox x:Name="NamesList" ItemsSource="{Binding UncheckedPeople, Mode=OneWay}" Grid.Row="1">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -35,6 +48,6 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button x:Name="ExportCheckInDataToExcelFile" Content="导出记录至Excel文件" Click="ExportCheckInDataToExcelFile_Click" Grid.Row="1" HorizontalAlignment="Right"/>
+        <Button x:Name="ExportCheckInDataToExcelFile" Content="导出记录至Excel文件" Click="ExportCheckInDataToExcelFile_Click" Grid.Row="2" HorizontalAlignment="Right"/>
     </Grid>
 </Page>

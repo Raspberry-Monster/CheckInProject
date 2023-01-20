@@ -12,8 +12,8 @@ namespace CheckInProject.CheckInCore.Interfaces
     {
         public Task<bool> CheckIn(DateOnly currentDate, TimeOnly currentTime, uint? personId);
         public List<CheckInDataModels> QueryTodayRecords();
-        public List<StringPersonDataBase> QueryTodayUncheckedRecords();
-        public void ExportRecordsToExcelFile(ExportTypeEnum exportType,string path);
+        public List<StringPersonDataBase> QueryRequestedTimeUncheckedRecords(TimeEnum ?targetTime);
+        public Task ExportRecordsToExcelFile(ExportTypeEnum exportType, string path, TimeEnum? targetTime = null);
         public void ClearCheckInRecords();
     }
 }

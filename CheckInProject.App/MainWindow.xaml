@@ -50,7 +50,7 @@
                         Icon="Accessibility24" Cursor="Hand" />
                     <wpfui:NavigationItem
                         Click="CheckInRecordsPage_Click"
-                        Content="识别记录"
+                        Content="打卡记录"
                         Icon="Storage24" Cursor="Hand" />
                     <wpfui:NavigationItem
                         Click="UncheckedPeoplePage_Click"

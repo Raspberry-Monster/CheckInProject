@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using CheckInProject.CheckInCore.Models;
 using CheckInProject.CheckInCore.Interfaces;
 using Microsoft.Win32;
+using System.Windows;
 
 namespace CheckInProject.App.Pages
 {
@@ -23,13 +24,20 @@ namespace CheckInProject.App.Pages
             InitializeComponent();
         }
 
-        private void ExportCheckInDataToExcelFile_Click(object sender, System.Windows.RoutedEventArgs e)
+        private async void ExportCheckInDataToExcelFile_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            var fileSaveDialog = new SaveFileDialog();
-            fileSaveDialog.Filter = "Excel文件|.xlsx";
-            if (fileSaveDialog.ShowDialog() == true)
+            try
             {
-                CheckInManager.ExportRecordsToExcelFile(ExportTypeEnum.CheckedIn, fileSaveDialog.FileName);
+                var fileSaveDialog = new SaveFileDialog();
+                fileSaveDialog.Filter = "Excel文件|.xlsx";
+                if (fileSaveDialog.ShowDialog() == true)
+                {
+                    await CheckInManager.ExportRecordsToExcelFile(ExportTypeEnum.CheckedIn, fileSaveDialog.FileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }

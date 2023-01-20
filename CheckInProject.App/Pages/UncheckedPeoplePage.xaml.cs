@@ -7,30 +7,78 @@ using CheckInProject.CheckInCore.Models;
 using CheckInProject.CheckInCore.Interfaces;
 using CheckInProject.CheckInCore.Implementation;
 using Microsoft.Win32;
+using System.Linq;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace CheckInProject.App.Pages
 {
     /// <summary>
     /// UncheckedPeoplePage.xaml 的交互逻辑
     /// </summary>
-    public partial class UncheckedPeoplePage : Page
+    public partial class UncheckedPeoplePage : Page, INotifyPropertyChanged
     {
         private readonly IServiceProvider ServiceProvider;
         public ICheckInManager CheckInManager => ServiceProvider.GetRequiredService<ICheckInManager>();
-        public List<StringPersonDataBase> ListBoxItems => CheckInManager.QueryTodayUncheckedRecords();
+        public List<StringPersonDataBase> UncheckedPeople 
+        {
+            get => _uncheckedPeople;
+            set
+            {
+                _uncheckedPeople = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private List<StringPersonDataBase> _uncheckedPeople = new List<StringPersonDataBase>();
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public UncheckedPeoplePage(IServiceProvider provider)
         {
             ServiceProvider = provider;
+            UncheckedPeople = CheckInManager.QueryRequestedTimeUncheckedRecords(null);
             InitializeComponent();
         }
-        private void ExportCheckInDataToExcelFile_Click(object sender, System.Windows.RoutedEventArgs e)
+        private async void ExportCheckInDataToExcelFile_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            var fileSaveDialog = new SaveFileDialog();
-            fileSaveDialog.Filter = "Excel文件|.xlsx";
-            if (fileSaveDialog.ShowDialog() == true)
+            try
             {
-                CheckInManager.ExportRecordsToExcelFile(ExportTypeEnum.UncheckedIn, fileSaveDialog.FileName);
+                var fileSaveDialog = new SaveFileDialog();
+                fileSaveDialog.Filter = "Excel文件|.xlsx";
+                if (fileSaveDialog.ShowDialog() == true)
+                {
+                    TimeEnum currentTime;
+                    if (QueryDuration.SelectedItem != null)
+                    {
+                        currentTime = (TimeEnum)QueryDuration.SelectedIndex;
+                        await CheckInManager.ExportRecordsToExcelFile(ExportTypeEnum.UncheckedIn, fileSaveDialog.FileName, currentTime);
+                    }
+                    else await CheckInManager.ExportRecordsToExcelFile(ExportTypeEnum.UncheckedIn, fileSaveDialog.FileName);
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void QueryDuration_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            TimeEnum currentTime;
+            if (QueryDuration.SelectedItem != null)
+            {
+                currentTime = (TimeEnum)QueryDuration.SelectedIndex;
+                UncheckedPeople = CheckInManager.QueryRequestedTimeUncheckedRecords(currentTime);
+            }
+            else UncheckedPeople = CheckInManager.QueryRequestedTimeUncheckedRecords(null);
+        }
+        public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            Dispatcher.Invoke(() =>
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            });
         }
     }
 }
