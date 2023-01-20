@@ -17,7 +17,7 @@ namespace CheckInProject.CheckInCore.Implementation
             Provider = provider;
         }
 
-        public async Task<bool> CheckIn(DateOnly currentDate, TimeOnly currentTime, uint? personId)
+        public async Task CheckIn(DateOnly currentDate, TimeOnly currentTime, uint? personId)
         {
             var checkInHistory = CheckInDatabaseService.CheckInData.ToList().Find(t => t.CheckInDate == currentDate && t.PersonID == personId);
             if (checkInHistory != null)
@@ -40,7 +40,6 @@ namespace CheckInProject.CheckInCore.Implementation
                 }
                 CheckInDatabaseService.Update(checkInHistory);
                 await CheckInDatabaseService.SaveChangesAsync();
-                return true;
             }
             else
             {
@@ -69,7 +68,6 @@ namespace CheckInProject.CheckInCore.Implementation
                 }
                 CheckInDatabaseService.Add(checkInData);
                 await CheckInDatabaseService.SaveChangesAsync();
-                return true;
             }
         }
 
@@ -118,7 +116,7 @@ namespace CheckInProject.CheckInCore.Implementation
             }
         }
 
-        public async void ClearCheckInRecords()
+        public async Task ClearCheckInRecords()
         {
             var currentCheckInRecords = CheckInDatabaseService.CheckInData.ToList();
             CheckInDatabaseService.RemoveRange(currentCheckInRecords);

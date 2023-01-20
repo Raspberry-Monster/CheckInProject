@@ -20,14 +20,14 @@ namespace CheckInProject.PersonDataCore.Implementation
             return result;
         }
 
-        public async void ImportFaceData(IList<StringPersonDataBase> faceData)
+        public async Task ImportFaceData(IList<StringPersonDataBase> faceData)
         {
-            ClearFaceData();
+            await ClearFaceData();
             DatabaseService.AddRange(faceData);
             await DatabaseService.SaveChangesAsync();
         }
 
-        public async void ClearFaceData()
+        public async Task ClearFaceData()
         {
             var currentFaceData = GetFaceData();
             if (currentFaceData.Count != 0)

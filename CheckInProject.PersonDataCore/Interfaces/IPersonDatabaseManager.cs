@@ -6,8 +6,8 @@ namespace CheckInProject.PersonDataCore.Interfaces
     {
         public StringPersonDataBaseContext DatabaseService { get; }
         public IList<StringPersonDataBase> GetFaceData();
-        public void ImportFaceData(IList<StringPersonDataBase> faceData);
-        public void ClearFaceData();
+        public Task ImportFaceData(IList<StringPersonDataBase> faceData);
+        public Task ClearFaceData();
         
     }
 }

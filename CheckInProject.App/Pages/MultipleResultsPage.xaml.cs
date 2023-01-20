@@ -3,6 +3,7 @@ using CheckInProject.PersonDataCore.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace CheckInProject.App.Pages
@@ -24,13 +25,21 @@ namespace CheckInProject.App.Pages
 
         private async void NamesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var targetData = (sender as ListBox)?.SelectedItem;
-            if (targetData != null)
+            try
             {
-                var currentTime = DateTime.Now;
-                await CheckInManager.CheckIn(DateOnly.FromDateTime(currentTime), TimeOnly.FromDateTime(currentTime), (targetData as RawPersonDataBase)?.PersonID);
-                App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
+                var targetData = (sender as ListBox)?.SelectedItem;
+                if (targetData != null)
+                {
+                    var currentTime = DateTime.Now;
+                    await CheckInManager.CheckIn(DateOnly.FromDateTime(currentTime), TimeOnly.FromDateTime(currentTime), (targetData as RawPersonDataBase)?.PersonID);
+                    App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
         }
     }
 }

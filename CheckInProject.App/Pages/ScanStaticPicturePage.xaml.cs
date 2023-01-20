@@ -60,80 +60,96 @@ namespace CheckInProject.App.Pages
 
         private async void CompareSingleFace_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "图片文件|*.jpg";
-            if (dialog.ShowDialog() == true)
+            try
             {
-                using (var targetFile = dialog.OpenFile())
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.Filter = "图片文件|*.jpg";
+                if (dialog.ShowDialog() == true)
                 {
-                    using (var targetBitmap = new Bitmap(targetFile))
+                    using (var targetFile = dialog.OpenFile())
                     {
-                        var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
-                        SourceImage = sourceImage;
-                        var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, null, null));
-                        var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
-                        var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
-                        var resultName = string.Empty;
-                        if (result.Count > 0)
+                        using (var targetBitmap = new Bitmap(targetFile))
                         {
-                            if (result.Count == 1)
+                            var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
+                            SourceImage = sourceImage;
+                            var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, null, null));
+                            var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
+                            var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
+                            var resultName = string.Empty;
+                            if (result.Count > 0)
                             {
-                                resultName = result.First().Name;
-                                if (string.IsNullOrEmpty(resultName)) resultName = "未识别到已知人脸";
-                                ResultNames = resultName ?? string.Empty;
-                                await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().PersonID);
-                                await Task.Delay(1500);
-                                App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
+                                if (result.Count == 1)
+                                {
+                                    resultName = result.First().Name;
+                                    if (string.IsNullOrEmpty(resultName)) resultName = "未识别到已知人脸";
+                                    ResultNames = resultName ?? string.Empty;
+                                    await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().PersonID);
+                                    await Task.Delay(1500);
+                                    App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
 
+                                }
+                                else
+                                {
+                                    ResultItems.Clear();
+                                    ResultItems.AddRange(result);
+                                    App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>());
+                                }
                             }
                             else
                             {
-                                ResultItems.Clear();
-                                ResultItems.AddRange(result);
-                                App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>());
+                                ResultNames = "未识别到已知人脸";
                             }
-                        }
-                        else
-                        {
-                            ResultNames = "未识别到已知人脸";
                         }
                     }
                 }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
         private async void CompareMultipleFaces_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "图片文件|*.jpg";
-            if (dialog.ShowDialog() == true)
+            try
             {
-                using (var targetFile = dialog.OpenFile())
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.Filter = "图片文件|*.jpg";
+                if (dialog.ShowDialog() == true)
                 {
-                    using (var targetBitmap = new Bitmap(targetFile))
+                    using (var targetFile = dialog.OpenFile())
                     {
-                        var resultNameString = string.Empty;
-                        var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
-                        SourceImage = sourceImage;
-                        var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFacesData(targetBitmap));
-                        var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
-                        var result = await Task.Run(() => FaceRecognitionAPI.CompareFaces(knownFaces, targetFaceEncoding));
-                        if (result.Count > 0)
+                        using (var targetBitmap = new Bitmap(targetFile))
                         {
-                            var resultNameList = result.Select(t => t.Name).ToList();
-                            resultNameString = string.Join("/", resultNameList);
-                            result.Select(t => t.PersonID).ToList().ForEach(async t => await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), t));
-                            ResultNames = resultNameString;
-                            await Task.Delay(1500);
-                            App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
-                        }
-                        else
-                        {
-                            resultNameString = "未识别到已知人脸";
-                            ResultNames = resultNameString;
+                            var resultNameString = string.Empty;
+                            var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
+                            SourceImage = sourceImage;
+                            var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFacesData(targetBitmap));
+                            var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
+                            var result = await Task.Run(() => FaceRecognitionAPI.CompareFaces(knownFaces, targetFaceEncoding));
+                            if (result.Count > 0)
+                            {
+                                var resultNameList = result.Select(t => t.Name).ToList();
+                                resultNameString = string.Join("/", resultNameList);
+                                result.Select(t => t.PersonID).ToList().ForEach(async t => await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), t));
+                                ResultNames = resultNameString;
+                                await Task.Delay(1500);
+                                App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
+                            }
+                            else
+                            {
+                                resultNameString = "未识别到已知人脸";
+                                ResultNames = resultNameString;
+                            }
                         }
                     }
                 }
             }
+            catch(Exception ex) 
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+                
         }
         public void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {

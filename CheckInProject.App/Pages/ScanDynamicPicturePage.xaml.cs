@@ -70,70 +70,78 @@ namespace CheckInProject.App.Pages
         }
         public async void CaptureVideo()
         {
-            using (var capture = new VideoCapture(0,VideoCaptureAPIs.DSHOW))
+            try
             {
-                var capturedTime = 0;
-                if (!capture.IsOpened())
+                using (var capture = new VideoCapture(0, VideoCaptureAPIs.DSHOW))
                 {
-                    return;
-                }
-                    
-                var image = new Mat();
-                CascadeClassifier cascade = new CascadeClassifier("haarcascade_frontalface_alt.xml");
-                while (CameraMode && capturedTime < 15)
-                {
-                    capture.Read(image);
-                    if (image.Empty())
-                        break;
-                    Rect[] faces = cascade.DetectMultiScale(
-                        image: image,
-                        scaleFactor: 1.1,
-                        minNeighbors: 1,
-                        flags: HaarDetectionTypes.DoRoughSearch | HaarDetectionTypes.ScaleImage,
-                        minSize: new OpenCvSharp.Size(30, 30)
-                    );
-                    if (faces.Length <= 0) //没识别到人脸
+                    var capturedTime = 0;
+                    if (!capture.IsOpened())
                     {
-                        var resultPicture = PictureConverters.ToBitmapImage(image.ToBitmap());
-                        SourceImage = resultPicture;
-                        await Task.Delay(100);
-                        capturedTime = 0;
+                        return;
                     }
-                    else
+
+                    var image = new Mat();
+                    CascadeClassifier cascade = new CascadeClassifier("haarcascade_frontalface_alt.xml");
+                    while (CameraMode && capturedTime < 15)
                     {
-                        var resultPicture = PictureConverters.ToBitmapImage(image.ToBitmap());
-                        SourceImage = resultPicture;
-                        await Task.Delay(100);
-                        capturedTime++;
+                        capture.Read(image);
+                        if (image.Empty())
+                            break;
+                        Rect[] faces = cascade.DetectMultiScale(
+                            image: image,
+                            scaleFactor: 1.1,
+                            minNeighbors: 1,
+                            flags: HaarDetectionTypes.DoRoughSearch | HaarDetectionTypes.ScaleImage,
+                            minSize: new OpenCvSharp.Size(30, 30)
+                        );
+                        if (faces.Length <= 0) //没识别到人脸
+                        {
+                            var resultPicture = PictureConverters.ToBitmapImage(image.ToBitmap());
+                            SourceImage = resultPicture;
+                            await Task.Delay(100);
+                            capturedTime = 0;
+                        }
+                        else
+                        {
+                            var resultPicture = PictureConverters.ToBitmapImage(image.ToBitmap());
+                            SourceImage = resultPicture;
+                            await Task.Delay(100);
+                            capturedTime++;
+                        }
                     }
-                }
-                CameraMode = false;
-                var targetBitmap = image.ToBitmap();
-                    var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, null , null));
+                    CameraMode = false;
+                    var targetBitmap = image.ToBitmap();
+                    var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, null, null));
                     var knownFaces = await Task.Run(() => PersonDatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
                     var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
-                var resultName = string.Empty;
-                if (result.Count > 0)
-                {
-                    if (result.Count == 1) 
+                    var resultName = string.Empty;
+                    if (result.Count > 0)
                     {
-                        resultName = result.First().Name;
-                        ResultNames = resultName ?? string.Empty;
-                        await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().PersonID);
-                        await Task.Delay(1500);
-                        Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>()));
-                    } 
-                    else
-                    {
-                        ResultItems.Clear();
-                        ResultItems.AddRange(result);
-                        Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>()));
+                        if (result.Count == 1)
+                        {
+                            resultName = result.First().Name;
+                            ResultNames = resultName ?? string.Empty;
+                            await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().PersonID);
+                            await Task.Delay(1500);
+                            Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>()));
+                        }
+                        else
+                        {
+                            ResultItems.Clear();
+                            ResultItems.AddRange(result);
+                            Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>()));
+                        }
                     }
+                    if (string.IsNullOrEmpty(resultName)) ResultNames = "未识别到已知人脸";
+
+                    image.Dispose();
                 }
-                if (string.IsNullOrEmpty(resultName)) ResultNames = "未识别到已知人脸";
-                
-                image.Dispose();
             }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
         }
         public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {

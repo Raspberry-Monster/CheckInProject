@@ -65,13 +65,20 @@ namespace CheckInProject.App.Pages
 
         private void QueryDuration_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            TimeEnum currentTime;
-            if (QueryDuration.SelectedItem != null)
+            try
             {
-                currentTime = (TimeEnum)QueryDuration.SelectedIndex;
-                UncheckedPeople = CheckInManager.QueryRequestedTimeUncheckedRecords(currentTime);
+                TimeEnum currentTime;
+                if (QueryDuration.SelectedItem != null)
+                {
+                    currentTime = (TimeEnum)QueryDuration.SelectedIndex;
+                    UncheckedPeople = CheckInManager.QueryRequestedTimeUncheckedRecords(currentTime);
+                }
+                else UncheckedPeople = CheckInManager.QueryRequestedTimeUncheckedRecords(null);
             }
-            else UncheckedPeople = CheckInManager.QueryRequestedTimeUncheckedRecords(null);
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {

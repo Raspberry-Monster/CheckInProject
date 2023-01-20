@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace CheckInProject.App.Pages
@@ -65,38 +66,45 @@ namespace CheckInProject.App.Pages
 
         private async void CreateFaceDataButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            var faceDataList = new List<RawPersonDataBase>();
-            using (var sourcePathSelector = new CommonOpenFileDialog())
+            try
             {
-                sourcePathSelector.IsFolderPicker = true;
-                if (sourcePathSelector.ShowDialog() == CommonFileDialogResult.Ok)
+                var faceDataList = new List<RawPersonDataBase>();
+                using (var sourcePathSelector = new CommonOpenFileDialog())
                 {
-                    var sourcePath = sourcePathSelector.FileName;
-                    PathName = sourcePath;
-                    uint index = 0;
-                    var imageFiles = Directory.GetFiles(sourcePath);
-                    foreach (var imageFile in imageFiles)
+                    sourcePathSelector.IsFolderPicker = true;
+                    if (sourcePathSelector.ShowDialog() == CommonFileDialogResult.Ok)
                     {
-                        FileInfo fileInfo = new FileInfo(imageFile);
-                        if (fileInfo.Extension == ".jpg" && ServiceProvider != null)
+                        var sourcePath = sourcePathSelector.FileName;
+                        PathName = sourcePath;
+                        uint index = 0;
+                        var imageFiles = Directory.GetFiles(sourcePath);
+                        foreach (var imageFile in imageFiles)
                         {
-                            CurrentName = $"正在创建{fileInfo.Name}的人脸数据";
-                            using (var imageBitmap = new Bitmap(imageFile))
+                            FileInfo fileInfo = new FileInfo(imageFile);
+                            if (fileInfo.Extension == ".jpg" && ServiceProvider != null)
                             {
-                                var sourceName = fileInfo.Name.Replace(fileInfo.Extension, string.Empty);
-                                var resultFaceData = await Task.Run(()=>FaceRecognitionAPI.CreateFaceData(imageBitmap, sourceName, ++index));
-                                faceDataList.Add(resultFaceData);
+                                CurrentName = $"正在创建{fileInfo.Name}的人脸数据";
+                                using (var imageBitmap = new Bitmap(imageFile))
+                                {
+                                    var sourceName = fileInfo.Name.Replace(fileInfo.Extension, string.Empty);
+                                    var resultFaceData = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(imageBitmap, sourceName, ++index));
+                                    faceDataList.Add(resultFaceData);
+                                }
+                                CurrentName = $"已创建完成{fileInfo.Name}的人脸数据";
                             }
-                            CurrentName = $"已创建完成{fileInfo.Name}的人脸数据";
                         }
+                        CurrentName = "正在向数据库导入数据";
+                        await CheckInManager.ClearCheckInRecords();
+                        var stringFaceDatas = faceDataList.Select(t => t.ConvertToStringPersonDataBase()).ToList();
+                        await DatabaseAPI.ImportFaceData(stringFaceDatas);
+                        CurrentName = "导入完成";
+                        NotifyPropertyChanged(nameof(ListBoxItems));
                     }
-                    CurrentName = "正在向数据库导入数据";
-                    CheckInManager.ClearCheckInRecords();
-                    var stringFaceDatas = faceDataList.Select(t => t.ConvertToStringPersonDataBase()).ToList();
-                    DatabaseAPI.ImportFaceData(stringFaceDatas);
-                    CurrentName = "导入完成";
-                    NotifyPropertyChanged(nameof(ListBoxItems));
                 }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }
