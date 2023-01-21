@@ -100,7 +100,8 @@ namespace CheckInProject.App.Pages
                     {
                         return;
                     }
-
+                    capture.FrameWidth = 640;
+                    capture.FrameHeight = 480;
                     var image = new Mat();
                     CascadeClassifier cascade = new CascadeClassifier("haarcascade_frontalface_default.xml");
                     while (CameraMode && capturedTime < 15)

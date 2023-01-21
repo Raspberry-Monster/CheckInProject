@@ -68,36 +68,39 @@ namespace CheckInProject.App.Pages
                 {
                     using (var targetFile = dialog.OpenFile())
                     {
-                        using (var targetBitmap = new Bitmap(targetFile))
+                        using (var sourceBitmap = new Bitmap(targetFile))
                         {
-                            var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
-                            SourceImage = sourceImage;
-                            var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, null, null));
-                            var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
-                            var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
-                            var resultName = string.Empty;
-                            if (result.Count > 0)
+                            using (var targetBitmap = CompressImage(sourceBitmap))
                             {
-                                if (result.Count == 1)
+                                var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
+                                SourceImage = sourceImage;
+                                var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, null, null));
+                                var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
+                                var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
+                                var resultName = string.Empty;
+                                if (result.Count > 0)
                                 {
-                                    resultName = result.First().Name;
-                                    if (string.IsNullOrEmpty(resultName)) resultName = "未识别到已知人脸";
-                                    ResultNames = resultName ?? string.Empty;
-                                    await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().PersonID);
-                                    await Task.Delay(1500);
-                                    App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
+                                    if (result.Count == 1)
+                                    {
+                                        resultName = result.First().Name;
+                                        if (string.IsNullOrEmpty(resultName)) resultName = "未识别到已知人脸";
+                                        ResultNames = resultName ?? string.Empty;
+                                        await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().PersonID);
+                                        await Task.Delay(1500);
+                                        App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
 
+                                    }
+                                    else
+                                    {
+                                        ResultItems.Clear();
+                                        ResultItems.AddRange(result);
+                                        App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>());
+                                    }
                                 }
                                 else
                                 {
-                                    ResultItems.Clear();
-                                    ResultItems.AddRange(result);
-                                    App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>());
+                                    ResultNames = "未识别到已知人脸";
                                 }
-                            }
-                            else
-                            {
-                                ResultNames = "未识别到已知人脸";
                             }
                         }
                     }
@@ -118,28 +121,31 @@ namespace CheckInProject.App.Pages
                 {
                     using (var targetFile = dialog.OpenFile())
                     {
-                        using (var targetBitmap = new Bitmap(targetFile))
+                        using (var sourceBitmap = new Bitmap(targetFile))
                         {
-                            var resultNameString = string.Empty;
-                            var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
-                            SourceImage = sourceImage;
-                            var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFacesData(targetBitmap));
-                            var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
-                            var result = await Task.Run(() => FaceRecognitionAPI.CompareFaces(knownFaces, targetFaceEncoding));
-                            if (result.Count > 0)
+                            using (var targetBitmap = CompressImage(sourceBitmap))
                             {
-                                var resultNameList = result.Select(t => t.Name).ToList();
-                                resultNameString = string.Join("/", resultNameList);
-                                result.Select(t => t.PersonID).ToList().ForEach(async t => await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), t));
-                                ResultNames = resultNameString;
-                                await Task.Delay(1500);
-                                App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
-                            }
-                            else
-                            {
-                                resultNameString = "未识别到已知人脸";
-                                ResultNames = resultNameString;
-                            }
+                                var resultNameString = string.Empty;
+                                var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
+                                SourceImage = sourceImage;
+                                var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFacesData(targetBitmap));
+                                var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
+                                var result = await Task.Run(() => FaceRecognitionAPI.CompareFaces(knownFaces, targetFaceEncoding));
+                                if (result.Count > 0)
+                                {
+                                    var resultNameList = result.Select(t => t.Name).ToList();
+                                    resultNameString = string.Join("/", resultNameList);
+                                    result.Select(t => t.PersonID).ToList().ForEach(async t => await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), t));
+                                    ResultNames = resultNameString;
+                                    await Task.Delay(1500);
+                                    App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
+                                }
+                                else
+                                {
+                                    resultNameString = "未识别到已知人脸";
+                                    ResultNames = resultNameString;
+                                }
+                            } 
                         }
                     }
                 }
@@ -150,6 +156,36 @@ namespace CheckInProject.App.Pages
             }
 
                 
+        }
+
+        public Bitmap CompressImage(Bitmap sourceImage)
+        {
+            int ImageWidth = sourceImage.Width;
+            int ImageHeight = sourceImage.Height;
+            Bitmap targetImage = sourceImage;
+            if (ImageWidth > ImageHeight)
+            {
+                if (ImageWidth > 640)
+                {
+                    int toImageWidth = 640;
+                    int toImageHeight = (int)((float)ImageHeight / ((float)ImageWidth / (float)toImageWidth)); 
+                    targetImage = new Bitmap(sourceImage, toImageWidth, toImageHeight);
+                    sourceImage.Dispose();
+                    return targetImage;
+                }
+            }
+            else
+            {
+                if (ImageHeight > 480)
+                {
+                    int toImageHeight1 = 480;
+                    int toImageWidth1 = (int)((float)ImageWidth / ((float)ImageHeight / (float)toImageHeight1));
+                    targetImage = new Bitmap(sourceImage, toImageWidth1, toImageHeight1);
+                    sourceImage.Dispose();
+                    return targetImage;
+                }
+            }
+            return targetImage;
         }
         public void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
