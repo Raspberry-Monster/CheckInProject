@@ -102,7 +102,7 @@ namespace CheckInProject.App.Pages
                     }
 
                     var image = new Mat();
-                    CascadeClassifier cascade = new CascadeClassifier("haarcascade_frontalface_alt.xml");
+                    CascadeClassifier cascade = new CascadeClassifier("haarcascade_frontalface_default.xml");
                     while (CameraMode && capturedTime < 15)
                     {
                         capture.Read(image);

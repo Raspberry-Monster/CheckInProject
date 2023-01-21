@@ -56,6 +56,9 @@
     <None Update="FaceRecognitionModel\dlib_face_recognition_resnet_model_v1.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="haarcascade_frontalface_default.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="PersonData.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
