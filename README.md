@@ -1,6 +1,6 @@
 # CheckInProject
 
-##这个项目是干啥的
+## 这个项目是干啥的
 
 这个是Raspberry-Monster在2023年的比赛项目，是一个基于人脸识别的班级打卡系统
 
