@@ -1,9 +1,7 @@
 ﻿using CheckInProject.CheckInCore.Interfaces;
-using CheckInProject.PersonDataCore.Implementation;
 using CheckInProject.PersonDataCore.Interfaces;
 using CheckInProject.PersonDataCore.Models;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
