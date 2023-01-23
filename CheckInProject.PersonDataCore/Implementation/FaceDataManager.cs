@@ -10,7 +10,7 @@ namespace CheckInProject.PersonDataCore.Implementation
     {
         public FaceRecognition FaceRecognitionAPI => Provider.GetRequiredService<FaceRecognition>();
 
-        public IServiceProvider Provider;
+        private readonly IServiceProvider Provider;
 
         public RawPersonDataBase CreateFaceData(Bitmap sourceData, string? sourceName, uint? personID)
         {

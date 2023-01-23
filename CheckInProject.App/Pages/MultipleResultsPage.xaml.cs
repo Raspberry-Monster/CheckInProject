@@ -13,7 +13,7 @@ namespace CheckInProject.App.Pages
     /// </summary>
     public partial class MultipleResultsPage : Page
     {
-        public IServiceProvider ServiceProvider;
+        private readonly IServiceProvider ServiceProvider;
         public ICheckInManager CheckInManager => ServiceProvider.GetRequiredService<ICheckInManager>();
         public List<RawPersonDataBase> ListBoxItems=>ServiceProvider.GetRequiredService<List<RawPersonDataBase>>();
 

@@ -153,6 +153,7 @@ namespace CheckInProject.App.Pages
                             ResultItems.AddRange(result);
                             Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>()));
                             resultName = "多个检测结果";
+                            ResultNames = resultName ?? string.Empty;
                         }
                     }
                     if (string.IsNullOrEmpty(resultName)) ResultNames = "未识别到已知人脸";

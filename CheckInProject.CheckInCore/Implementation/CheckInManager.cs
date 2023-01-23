@@ -11,7 +11,7 @@ namespace CheckInProject.CheckInCore.Implementation
     {
         public CheckInDataModelContext CheckInDatabaseService => Provider.GetRequiredService<CheckInDataModelContext>();
         public StringPersonDataBaseContext PersonDatabaseService => Provider.GetRequiredService<StringPersonDataBaseContext>();
-        public IServiceProvider Provider;
+        private readonly IServiceProvider Provider;
         public CheckInManager(IServiceProvider provider)
         {
             Provider = provider;

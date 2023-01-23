@@ -13,7 +13,7 @@ namespace CheckInProject.PersonDataCore.Implementation
     public class PersonDatabaseManager : IPersonDatabaseManager
     {
         public StringPersonDataBaseContext DatabaseService => Provider.GetRequiredService<StringPersonDataBaseContext>();
-        public IServiceProvider Provider;
+        private readonly IServiceProvider Provider;
         public IList<StringPersonDataBase> GetFaceData()
         {
             var result = DatabaseService.PersonData.ToList();
