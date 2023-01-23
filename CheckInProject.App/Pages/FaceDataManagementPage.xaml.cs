@@ -1,4 +1,5 @@
-﻿using CheckInProject.CheckInCore.Interfaces;
+﻿using CheckInProject.App.Utils;
+using CheckInProject.CheckInCore.Interfaces;
 using CheckInProject.PersonDataCore.Interfaces;
 using CheckInProject.PersonDataCore.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +22,7 @@ namespace CheckInProject.App.Pages
     /// </summary>
     public partial class FaceDataManagementPage : Page, INotifyPropertyChanged
     {
-        private IServiceProvider ServiceProvider;
+        private readonly IServiceProvider ServiceProvider;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public string CurrentName
@@ -45,16 +46,29 @@ namespace CheckInProject.App.Pages
         }
         private string _pathName = string.Empty;
 
+        public bool CompressImageWhenEncoding
+        {
+            get => _compressImageWhenEncoding;
+            set
+            {
+                _compressImageWhenEncoding = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private bool _compressImageWhenEncoding = false;
+
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
         private IPersonDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IPersonDatabaseManager>();
         private ICheckInManager CheckInManager =>ServiceProvider.GetRequiredService<ICheckInManager>();
         public IList<StringPersonDataBase> ListBoxItems => DatabaseAPI.GetFaceData();
+
         public FaceDataManagementPage(IServiceProvider serviceProvider)
         {
             ServiceProvider = serviceProvider;
             InitializeComponent();
         }
-        public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             Dispatcher.Invoke(() =>
             {
@@ -62,7 +76,7 @@ namespace CheckInProject.App.Pages
             });
         }
 
-        private async void CreateFaceDataButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        private async void CreateFaceDataButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -82,10 +96,15 @@ namespace CheckInProject.App.Pages
                             if (fileInfo.Extension == ".jpg" && ServiceProvider != null)
                             {
                                 CurrentName = $"正在创建{fileInfo.Name}的人脸数据";
-                                using (var imageBitmap = new Bitmap(imageFile))
+                                
+                                using (var sourceImage = new Bitmap(imageFile))
                                 {
+                                    Bitmap imageBitmap;
+                                    if (CompressImageWhenEncoding) imageBitmap = PictureConverters.CompressImage(sourceImage, 1280, 720);
+                                    else imageBitmap = sourceImage;
                                     var sourceName = fileInfo.Name.Replace(fileInfo.Extension, string.Empty);
                                     var resultFaceData = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(imageBitmap, sourceName, ++index));
+                                    imageBitmap.Dispose();
                                     faceDataList.Add(resultFaceData);
                                 }
                                 CurrentName = $"已创建完成{fileInfo.Name}的人脸数据";

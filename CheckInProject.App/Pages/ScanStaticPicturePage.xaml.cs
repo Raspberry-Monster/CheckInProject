@@ -22,7 +22,7 @@ namespace CheckInProject.App.Pages
     /// </summary>
     public partial class ScanStaticPicturePage : Page, INotifyPropertyChanged
     {
-        public IServiceProvider ServiceProvider;
+        private readonly IServiceProvider ServiceProvider;
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
         private IPersonDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IPersonDatabaseManager>();
         private ICheckInManager CheckInManager =>ServiceProvider.GetRequiredService<ICheckInManager>();
@@ -70,7 +70,7 @@ namespace CheckInProject.App.Pages
                     {
                         using (var sourceBitmap = new Bitmap(targetFile))
                         {
-                            using (var targetBitmap = CompressImage(sourceBitmap))
+                            using (var targetBitmap = PictureConverters.CompressImage(sourceBitmap, 640, 480))
                             {
                                 var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
                                 SourceImage = sourceImage;
@@ -95,6 +95,7 @@ namespace CheckInProject.App.Pages
                                         ResultItems.Clear();
                                         ResultItems.AddRange(result);
                                         App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>());
+                                        resultName = "多个检测结果";
                                     }
                                 }
                                 else
@@ -123,7 +124,7 @@ namespace CheckInProject.App.Pages
                     {
                         using (var sourceBitmap = new Bitmap(targetFile))
                         {
-                            using (var targetBitmap = CompressImage(sourceBitmap))
+                            using (var targetBitmap = PictureConverters.CompressImage(sourceBitmap, 640, 480))
                             {
                                 var resultNameString = string.Empty;
                                 var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
@@ -158,36 +159,7 @@ namespace CheckInProject.App.Pages
                 
         }
 
-        public Bitmap CompressImage(Bitmap sourceImage)
-        {
-            int ImageWidth = sourceImage.Width;
-            int ImageHeight = sourceImage.Height;
-            Bitmap targetImage = sourceImage;
-            if (ImageWidth > ImageHeight)
-            {
-                if (ImageWidth > 640)
-                {
-                    int toImageWidth = 640;
-                    int toImageHeight = (int)((float)ImageHeight / ((float)ImageWidth / (float)toImageWidth)); 
-                    targetImage = new Bitmap(sourceImage, toImageWidth, toImageHeight);
-                    sourceImage.Dispose();
-                    return targetImage;
-                }
-            }
-            else
-            {
-                if (ImageHeight > 480)
-                {
-                    int toImageHeight1 = 480;
-                    int toImageWidth1 = (int)((float)ImageWidth / ((float)ImageHeight / (float)toImageHeight1));
-                    targetImage = new Bitmap(sourceImage, toImageWidth1, toImageHeight1);
-                    sourceImage.Dispose();
-                    return targetImage;
-                }
-            }
-            return targetImage;
-        }
-        public void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
+        private void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
         {
             Dispatcher.Invoke(() =>
             {

@@ -24,7 +24,7 @@ namespace CheckInProject.App.Pages
     /// </summary>
     public partial class ScanDynamicPicturePage : Page, INotifyPropertyChanged
     {
-        private IServiceProvider ServiceProvider;
+        private readonly IServiceProvider ServiceProvider;
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
         private IPersonDatabaseManager PersonDatabaseAPI => ServiceProvider.GetRequiredService<IPersonDatabaseManager>();
         private ICheckInManager CheckInManager => ServiceProvider.GetRequiredService<ICheckInManager>();
@@ -152,6 +152,7 @@ namespace CheckInProject.App.Pages
                             ResultItems.Clear();
                             ResultItems.AddRange(result);
                             Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>()));
+                            resultName = "多个检测结果";
                         }
                     }
                     if (string.IsNullOrEmpty(resultName)) ResultNames = "未识别到已知人脸";
@@ -165,7 +166,7 @@ namespace CheckInProject.App.Pages
             }
             
         }
-        public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             Dispatcher.Invoke(() =>
             {

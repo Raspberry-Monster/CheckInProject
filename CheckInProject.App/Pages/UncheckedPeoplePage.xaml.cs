@@ -80,7 +80,7 @@ namespace CheckInProject.App.Pages
                 MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             Dispatcher.Invoke(() =>
             {

@@ -19,5 +19,30 @@ namespace CheckInProject.App.Utils
             bitmapImage.Freeze();
             return bitmapImage;
         }
+        public static Bitmap CompressImage(Bitmap sourceImage,int targetImageWidth, int targetImageHeight)
+        {
+            int sorceImageWidth = sourceImage.Width;
+            int sorceImageHeight = sourceImage.Height;
+            Bitmap targetImage = sourceImage;
+            if (sorceImageWidth > sorceImageHeight)
+            {
+                if (sorceImageWidth > targetImageWidth)
+                {
+                    var tempHeight = sorceImageHeight / (sorceImageWidth / targetImageWidth); 
+                    targetImage = new Bitmap(sourceImage, targetImageWidth, tempHeight);
+                    return targetImage;
+                }
+            }
+            else
+            {
+                if (sorceImageHeight > targetImageHeight)
+                {
+                    int tempWidth = sorceImageWidth / (sorceImageHeight / targetImageHeight);
+                    targetImage = new Bitmap(sourceImage, tempWidth, targetImageHeight);
+                    return targetImage;
+                }
+            }
+            return targetImage;
+        }
     }
 }

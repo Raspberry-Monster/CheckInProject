@@ -16,7 +16,7 @@ namespace CheckInProject.App.Pages
 
         private ICheckInManager CheckInManager => ServiceProvider.GetRequiredService<ICheckInManager>();
 
-        private IServiceProvider ServiceProvider;
+        private readonly IServiceProvider ServiceProvider;
 
         public DatabaseManagementPage(IServiceProvider serviceProvider)
         {
