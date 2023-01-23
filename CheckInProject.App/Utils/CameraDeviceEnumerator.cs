@@ -9,7 +9,6 @@ namespace CheckInProject.App.Utils
     {
         public static List<CameraDevice> EnumerateCameras()
         {
-            var cameras = new List<CameraDevice>();
             var videoInputDevices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
             int openCvId = 0;
             return videoInputDevices.Select(v => new CameraDevice()
