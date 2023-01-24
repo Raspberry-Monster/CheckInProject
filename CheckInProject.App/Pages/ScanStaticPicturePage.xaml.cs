@@ -25,11 +25,11 @@ namespace CheckInProject.App.Pages
         private readonly IServiceProvider ServiceProvider;
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
         private IPersonDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IPersonDatabaseManager>();
-        private ICheckInManager CheckInManager =>ServiceProvider.GetRequiredService<ICheckInManager>();
+        private ICheckInManager CheckInManager => ServiceProvider.GetRequiredService<ICheckInManager>();
         private List<RawPersonDataBase> ResultItems => ServiceProvider.GetRequiredService<List<RawPersonDataBase>>();
 
         public string ResultNames
-        { 
+        {
             get => _resultName;
             set
             {
@@ -107,7 +107,7 @@ namespace CheckInProject.App.Pages
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -146,20 +146,20 @@ namespace CheckInProject.App.Pages
                                     resultNameString = "未识别到已知人脸";
                                     ResultNames = resultNameString;
                                 }
-                            } 
+                            }
                         }
                     }
                 }
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-                
+
         }
 
-        private void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             Dispatcher.Invoke(() =>
             {

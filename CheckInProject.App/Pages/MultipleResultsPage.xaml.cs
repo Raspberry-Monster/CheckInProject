@@ -15,7 +15,7 @@ namespace CheckInProject.App.Pages
     {
         private readonly IServiceProvider ServiceProvider;
         public ICheckInManager CheckInManager => ServiceProvider.GetRequiredService<ICheckInManager>();
-        public List<RawPersonDataBase> ListBoxItems=>ServiceProvider.GetRequiredService<List<RawPersonDataBase>>();
+        public List<RawPersonDataBase> ListBoxItems => ServiceProvider.GetRequiredService<List<RawPersonDataBase>>();
 
         public MultipleResultsPage(IServiceProvider serviceProvider)
         {
@@ -39,7 +39,7 @@ namespace CheckInProject.App.Pages
             {
                 MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            
+
         }
     }
 }

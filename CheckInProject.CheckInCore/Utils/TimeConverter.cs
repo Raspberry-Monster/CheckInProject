@@ -1,9 +1,4 @@
 ﻿using CheckInProject.CheckInCore.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CheckInProject.CheckInCore.Utils
 {

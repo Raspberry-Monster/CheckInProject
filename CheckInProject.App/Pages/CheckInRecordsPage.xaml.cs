@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CheckInProject.CheckInCore.Interfaces;
+using CheckInProject.CheckInCore.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
-using CheckInProject.CheckInCore.Models;
-using CheckInProject.CheckInCore.Interfaces;
-using Microsoft.Win32;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace CheckInProject.App.Pages
 {

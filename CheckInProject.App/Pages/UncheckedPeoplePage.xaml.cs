@@ -1,16 +1,14 @@
-﻿using CheckInProject.PersonDataCore.Models;
+﻿using CheckInProject.CheckInCore.Interfaces;
+using CheckInProject.CheckInCore.Models;
+using CheckInProject.PersonDataCore.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
-using CheckInProject.CheckInCore.Models;
-using CheckInProject.CheckInCore.Interfaces;
-using CheckInProject.CheckInCore.Implementation;
-using Microsoft.Win32;
-using System.Linq;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace CheckInProject.App.Pages
 {
@@ -21,7 +19,7 @@ namespace CheckInProject.App.Pages
     {
         private readonly IServiceProvider ServiceProvider;
         public ICheckInManager CheckInManager => ServiceProvider.GetRequiredService<ICheckInManager>();
-        public List<StringPersonDataBase> UncheckedPeople 
+        public List<StringPersonDataBase> UncheckedPeople
         {
             get => _uncheckedPeople;
             set

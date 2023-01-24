@@ -1,16 +1,16 @@
-﻿using CheckInProject.PersonDataCore.Models;
-using CheckInProject.App.Pages;
+﻿using CheckInProject.App.Pages;
+using CheckInProject.CheckInCore.Implementation;
+using CheckInProject.CheckInCore.Interfaces;
+using CheckInProject.CheckInCore.Models;
 using CheckInProject.PersonDataCore.Implementation;
 using CheckInProject.PersonDataCore.Interfaces;
+using CheckInProject.PersonDataCore.Models;
 using FaceRecognitionDotNet;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Collections.Generic;
-using CheckInProject.CheckInCore.Interfaces;
-using CheckInProject.CheckInCore.Implementation;
-using CheckInProject.CheckInCore.Models;
 
 namespace CheckInProject.App
 {

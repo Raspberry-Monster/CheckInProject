@@ -60,7 +60,7 @@ namespace CheckInProject.App.Pages
 
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
         private IPersonDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IPersonDatabaseManager>();
-        private ICheckInManager CheckInManager =>ServiceProvider.GetRequiredService<ICheckInManager>();
+        private ICheckInManager CheckInManager => ServiceProvider.GetRequiredService<ICheckInManager>();
         public IList<StringPersonDataBase> ListBoxItems => DatabaseAPI.GetFaceData();
 
         public FaceDataManagementPage(IServiceProvider serviceProvider)
@@ -96,7 +96,7 @@ namespace CheckInProject.App.Pages
                             if (fileInfo.Extension == ".jpg" && ServiceProvider != null)
                             {
                                 CurrentName = $"正在创建{fileInfo.Name}的人脸数据";
-                                
+
                                 using (var sourceImage = new Bitmap(imageFile))
                                 {
                                     Bitmap imageBitmap;
@@ -119,7 +119,7 @@ namespace CheckInProject.App.Pages
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }

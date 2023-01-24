@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MiniExcelLibs.Attributes;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CheckInProject.PersonDataCore.Models
 {
@@ -14,7 +13,7 @@ namespace CheckInProject.PersonDataCore.Models
         public StringPersonDataBase ConvertToStringPersonDataBase()
         {
             var encodingResult = string.Join(";", FaceEncoding.Select(p => p.ToString()).ToArray());
-            return new StringPersonDataBase { FaceEncodingString = encodingResult, Name = Name, PersonID = PersonID, RecordID = RecordID };          
+            return new StringPersonDataBase { FaceEncodingString = encodingResult, Name = Name, PersonID = PersonID, RecordID = RecordID };
         }
     }
     public class StringPersonDataBase
@@ -34,18 +33,18 @@ namespace CheckInProject.PersonDataCore.Models
             return new RawPersonDataBase { FaceEncoding = encodingResult, Name = Name, PersonID = PersonID, RecordID = RecordID };
         }
     }
-    
+
     public class StringPersonDataBaseContext : DbContext
     {
         public DbSet<StringPersonDataBase> PersonData { get; set; }
-        
+
         public string DbPath { get; }
 
         public StringPersonDataBaseContext()
         {
             var path = Environment.CurrentDirectory;
             var targetPath = Path.Join(path, "PersonData.db");
-            DbPath = targetPath; 
+            DbPath = targetPath;
         }
 
         // The following configures EF to create a Sqlite database file in the

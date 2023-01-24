@@ -1,21 +1,21 @@
-﻿using System;
+﻿using CheckInProject.App.Models;
+using CheckInProject.App.Utils;
+using CheckInProject.CheckInCore.Interfaces;
+using CheckInProject.PersonDataCore.Interfaces;
+using CheckInProject.PersonDataCore.Models;
+using Microsoft.Extensions.DependencyInjection;
+using OpenCvSharp;
+using OpenCvSharp.Extensions;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using CheckInProject.App.Utils;
-using OpenCvSharp;
-using OpenCvSharp.Extensions;
 using Rect = OpenCvSharp.Rect;
-using CheckInProject.PersonDataCore.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
-using CheckInProject.PersonDataCore.Models;
-using System.Collections.Generic;
-using CheckInProject.CheckInCore.Interfaces;
-using CheckInProject.App.Models;
 
 namespace CheckInProject.App.Pages
 {
@@ -161,11 +161,11 @@ namespace CheckInProject.App.Pages
                     image.Dispose();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            
+
         }
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {

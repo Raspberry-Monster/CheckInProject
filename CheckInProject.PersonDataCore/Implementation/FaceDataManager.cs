@@ -1,8 +1,8 @@
-﻿using CheckInProject.PersonDataCore.Models;
-using CheckInProject.PersonDataCore.Interfaces;
+﻿using CheckInProject.PersonDataCore.Interfaces;
+using CheckInProject.PersonDataCore.Models;
 using FaceRecognitionDotNet;
-using System.Drawing;
 using Microsoft.Extensions.DependencyInjection;
+using System.Drawing;
 
 namespace CheckInProject.PersonDataCore.Implementation
 {
@@ -18,14 +18,14 @@ namespace CheckInProject.PersonDataCore.Implementation
             {
                 var encoding = FaceRecognitionAPI.FaceEncodings(recognitionImage).First().GetRawEncoding();
                 var personName = sourceName;
-                return new RawPersonDataBase { FaceEncoding = encoding, Name = personName ,PersonID = personID};
+                return new RawPersonDataBase { FaceEncoding = encoding, Name = personName, PersonID = personID };
             }
         }
         public IList<RawPersonDataBase> CreateFacesData(Bitmap sourceData)
         {
             using (var recognitionImage = FaceRecognition.LoadImage(sourceData))
             {
-                var encodings = FaceRecognitionAPI.FaceEncodings(recognitionImage).Select(t => new RawPersonDataBase { FaceEncoding = t.GetRawEncoding()}).ToList();
+                var encodings = FaceRecognitionAPI.FaceEncodings(recognitionImage).Select(t => new RawPersonDataBase { FaceEncoding = t.GetRawEncoding() }).ToList();
                 return encodings;
             }
         }
@@ -35,7 +35,7 @@ namespace CheckInProject.PersonDataCore.Implementation
             var faceEncodingList = faceDataList.Select(t => FaceRecognition.LoadFaceEncoding(t.FaceEncoding)).ToList();
             var targetFaceEncoding = FaceRecognition.LoadFaceEncoding(targetFaceData.FaceEncoding);
             var recognizedFaces = FaceRecognition.CompareFaces(faceEncodingList, targetFaceEncoding, 0.5);
-            var reconizedNames= new List<RawPersonDataBase>();
+            var reconizedNames = new List<RawPersonDataBase>();
             var index = 0;
             foreach (var recognizedFace in recognizedFaces)
             {

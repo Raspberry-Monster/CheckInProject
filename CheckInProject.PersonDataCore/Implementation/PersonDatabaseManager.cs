@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CheckInProject.PersonDataCore.Interfaces;
 using CheckInProject.PersonDataCore.Models;
-using CheckInProject.PersonDataCore.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 
 namespace CheckInProject.PersonDataCore.Implementation
 {
@@ -16,7 +10,7 @@ namespace CheckInProject.PersonDataCore.Implementation
         private readonly IServiceProvider Provider;
         public IList<StringPersonDataBase> GetFaceData()
         {
-            var result = DatabaseService.PersonData.OrderBy(t=>t.PersonID).ToList();
+            var result = DatabaseService.PersonData.OrderBy(t => t.PersonID).ToList();
             return result;
         }
 
