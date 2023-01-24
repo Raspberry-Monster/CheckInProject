@@ -73,7 +73,7 @@ namespace CheckInProject.CheckInCore.Implementation
 
         public List<CheckInDataModels> QueryTodayRecords()
         {
-            var result = CheckInDatabaseService.CheckInData.AsEnumerable().Where(t => t.CheckInDate == DateOnly.FromDateTime(DateTime.Now)).ToList();
+            var result = CheckInDatabaseService.CheckInData.AsEnumerable().Where(t => t.CheckInDate == DateOnly.FromDateTime(DateTime.Now)).OrderBy(t => t.PersonID).ToList();
             return result;
         }
         public List<StringPersonDataBase> QueryRequestedTimeUncheckedRecords(TimeEnum ?targetTime)
@@ -97,7 +97,7 @@ namespace CheckInProject.CheckInCore.Implementation
                     break;
             }
             var checkedPeople = PersonDatabaseService.PersonData.AsEnumerable().Where(t => currentTimeCheckedInRecords.Contains(t.PersonID)).ToList();
-            var uncheckedPeople = PersonDatabaseService.PersonData.AsEnumerable().ToList();
+            var uncheckedPeople = PersonDatabaseService.PersonData.AsEnumerable().OrderBy(t=>t.PersonID).ToList();
             checkedPeople.ForEach(t => uncheckedPeople.Remove(t));
             return uncheckedPeople;
         }

@@ -16,7 +16,7 @@ namespace CheckInProject.PersonDataCore.Implementation
         private readonly IServiceProvider Provider;
         public IList<StringPersonDataBase> GetFaceData()
         {
-            var result = DatabaseService.PersonData.ToList();
+            var result = DatabaseService.PersonData.OrderBy(t=>t.PersonID).ToList();
             return result;
         }
 
