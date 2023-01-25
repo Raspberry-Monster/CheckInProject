@@ -1,4 +1,5 @@
-﻿using CheckInProject.App.Pages;
+﻿using CheckInProject.App.Models;
+using CheckInProject.App.Pages;
 using CheckInProject.CheckInCore.Implementation;
 using CheckInProject.CheckInCore.Interfaces;
 using CheckInProject.CheckInCore.Models;
@@ -22,6 +23,8 @@ namespace CheckInProject.App
         public readonly IServiceProvider ServiceProvider;
 
         public static Frame? RootFrame = null;
+
+        public static bool DisableDatabaseProtection = false;
         public App()
         {
             var service = new ServiceCollection();
@@ -29,8 +32,10 @@ namespace CheckInProject.App
             service.AddDbContext<StringPersonDataBaseContext>();
             service.AddDbContext<CheckInDataModelContext>();
             //For services
-            var faceRecognitionService = FaceRecognition.Create("FaceRecognitionModel");
-            service.AddSingleton(faceRecognitionService);
+            //var faceRecognitionService = FaceRecognition.Create("FaceRecognitionModel");
+            //service.AddSingleton(faceRecognitionService);
+            var applicationSettings = Settings.CreateSettings();
+            service.AddSingleton(applicationSettings);
             service.AddSingleton<IPersonDatabaseManager, PersonDatabaseManager>();
             service.AddSingleton<ICheckInManager, CheckInManager>();
             service.AddSingleton<IFaceDataManager, FaceDataManager>();
@@ -44,12 +49,19 @@ namespace CheckInProject.App
             service.AddTransient<MultipleResultsPage>();
             service.AddTransient<UncheckedPeoplePage>();
             service.AddTransient<DatabaseManagementPage>();
+            service.AddTransient<SetDatabasePasswordPage>();
             ServiceProvider = service.BuildServiceProvider();
         }
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            foreach (var item in e.Args)
+            {
+                if (item == "--DisableDatabaseProtection") DisableDatabaseProtection = true;
+            }
             ServiceProvider.GetRequiredService<MainWindow>()?.Show();
+            var settings = ServiceProvider.GetRequiredService<Settings>();
+            if (settings.IsFirstRun && string.IsNullOrEmpty(settings.PasswordMD5)) RootFrame?.Navigate(ServiceProvider.GetRequiredService<SetDatabasePasswordPage>());
         }
     }
 }

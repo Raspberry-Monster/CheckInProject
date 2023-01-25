@@ -7,16 +7,45 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="DatabaseManagementPage"
-      Style="{StaticResource UiPage}">
+      Style="{StaticResource UiPage}"
+      DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="清空人脸数据库" Grid.Row="0" HorizontalAlignment="Left" FontSize="20"/>
-        <Button Content="清空人脸数据库" x:Name="ClearFaceDataDatabase" Grid.Row="0" HorizontalAlignment="Right" Click="ClearFaceDataDatabase_Click"/>
-        <TextBlock Text="清空打卡数据库" Grid.Row="1" HorizontalAlignment="Left" FontSize="20"/>
-        <Button Content="清空打卡数据库" x:Name="ClearCheckInDatabase" Grid.Row="1" HorizontalAlignment="Right" Click="ClearCheckInDatabase_Click"/>
+        <Grid Grid.Row="0" Visibility="{Binding IsLoggedIn, Mode=OneWay, Converter={StaticResource ReversedBooleanToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="请输入密码" FontSize="20" Grid.Row="0"/>
+            <PasswordBox x:Name="DatabaseCheckInPasswordBox" Grid.Row="1"/>
+            <Button Content="确认" Grid.Row="2" HorizontalAlignment="Right" Name ="CheckPasswordButton" Click="CheckPassword_Click"/>
+            <Button Content="忘记密码" Grid.Row="2" HorizontalAlignment="Left" Click="ForgotPassword_Click" Visibility="{Binding ForgotPasswordShowStatus, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        </Grid>
+        <Grid Grid.Row="1" Visibility="{Binding IsLoggedIn, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="清空人脸数据库" Grid.Row="0" HorizontalAlignment="Left" FontSize="20"/>
+            <Button Content="清空人脸数据库" x:Name="ClearFaceDataDatabase" Grid.Row="0" HorizontalAlignment="Right" Click="ClearFaceDataDatabase_Click"/>
+            <TextBlock Text="清空打卡数据库" Grid.Row="1" HorizontalAlignment="Left" FontSize="20"/>
+            <Button Content="清空打卡数据库" x:Name="ClearCheckInDatabase" Grid.Row="1" HorizontalAlignment="Right" Click="ClearCheckInDatabase_Click"/>
+        </Grid>
+        <Grid Grid.Row="2" Visibility="{Binding IsLoggedIn, Mode=OneWay,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="更改密码" FontSize="20" Grid.Row="0"/>
+            <PasswordBox x:Name="NewPasswordBox" Grid.Row="1"/>
+            <Button x:Name="SetNewPasswordButton" Grid.Row="2" HorizontalAlignment="Right" Click="SetNewPasswordButton_Click" Content="设置新密码"/>
+        </Grid>
     </Grid>
 </Page>

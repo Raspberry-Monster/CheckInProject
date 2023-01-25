@@ -38,7 +38,7 @@ namespace CheckInProject.App.Pages
             UncheckedPeople = CheckInManager.QueryRequestedTimeUncheckedRecords(null);
             InitializeComponent();
         }
-        private async void ExportCheckInDataToExcelFile_Click(object sender, System.Windows.RoutedEventArgs e)
+        private async void ExportCheckInDataToExcelFile_Click(object sender, RoutedEventArgs e)
         {
             try
             {

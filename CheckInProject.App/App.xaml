@@ -8,6 +8,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <wpfui:ThemesDictionary Theme="Dark" />
                 <wpfui:ControlsDictionary />
+                <ResourceDictionary Source="Utils\ConvertersDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

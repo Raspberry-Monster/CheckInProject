@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CheckInProject.App": {
+      "commandName": "Project",
+      "commandLineArgs": "--Disable"
+    }
+  }
+}

@@ -8,6 +8,7 @@
     <Platforms>x64</Platforms>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <StartupObject>CheckInProject.App.App</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
