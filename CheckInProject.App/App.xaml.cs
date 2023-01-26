@@ -59,6 +59,8 @@ namespace CheckInProject.App
             {
                 if (item == "--DisableDatabaseProtection") DisableDatabaseProtection = true;
             }
+            ServiceProvider.GetRequiredService<StringPersonDataBaseContext>().Database.EnsureCreated();
+            ServiceProvider.GetRequiredService<CheckInDataModelContext>().Database.EnsureCreated();
             ServiceProvider.GetRequiredService<MainWindow>()?.Show();
             var settings = ServiceProvider.GetRequiredService<Settings>();
             if (settings.IsFirstRun && string.IsNullOrEmpty(settings.PasswordMD5)) RootFrame?.Navigate(ServiceProvider.GetRequiredService<SetDatabasePasswordPage>());
