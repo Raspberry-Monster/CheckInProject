@@ -47,10 +47,6 @@
                         Content="动态识别"
                         Icon="Accessibility24" Cursor="Hand" />
                     <wpfui:NavigationItem
-                        Click="FaceDataManagementPage_Click"
-                        Content="人脸管理"
-                        Icon="Accessibility24" Cursor="Hand" />
-                    <wpfui:NavigationItem
                         Click="CheckInRecordsPage_Click"
                         Content="打卡记录"
                         Icon="Storage24" Cursor="Hand" />

@@ -32,8 +32,8 @@ namespace CheckInProject.App
             service.AddDbContext<StringPersonDataBaseContext>();
             service.AddDbContext<CheckInDataModelContext>();
             //For services
-            //var faceRecognitionService = FaceRecognition.Create("FaceRecognitionModel");
-            //service.AddSingleton(faceRecognitionService);
+            var faceRecognitionService = FaceRecognition.Create("FaceRecognitionModel");
+            service.AddSingleton(faceRecognitionService);
             var applicationSettings = Settings.CreateSettings();
             service.AddSingleton(applicationSettings);
             service.AddSingleton<IPersonDatabaseManager, PersonDatabaseManager>();

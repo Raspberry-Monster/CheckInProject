@@ -32,10 +32,6 @@ namespace CheckInProject.App
         {
             RootFrame.Navigate(ServiceProvider.GetRequiredService<ScanDynamicPicturePage>());
         }
-        private void FaceDataManagementPage_Click(object sender, RoutedEventArgs e)
-        {
-            RootFrame.Navigate(ServiceProvider.GetRequiredService<FaceDataManagementPage>());
-        }
 
         private void CheckInRecordsPage_Click(object sender, RoutedEventArgs e)
         {

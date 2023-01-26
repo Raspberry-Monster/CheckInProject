@@ -19,7 +19,7 @@
         <Image Grid.Row="0" Source="{Binding SourceImage}" />
         <TextBlock Grid.Row="1" Text="{Binding ResultNames,Mode=OneWay}" FontSize="15" HorizontalAlignment="Center" />
         <Grid Grid.Row="2">
-            <TextBlock Text="摄像头选择: " HorizontalAlignment="Left" FontSize="20"/>
+            <TextBlock Text="摄像头选择: " HorizontalAlignment="Left" FontSize="18"/>
             <ComboBox x:Name="CameraSelector" ItemsSource="{Binding Path=CameraDevices, Mode=OneWay}" HorizontalAlignment="Center">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>

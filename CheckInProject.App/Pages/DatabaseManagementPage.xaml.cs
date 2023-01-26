@@ -145,5 +145,10 @@ namespace CheckInProject.App.Pages
         {
             App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<SetDatabasePasswordPage>());
         }
+
+        private void OpenFaceDataManageMentPage_Click(object sender, RoutedEventArgs e)
+        {
+            App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<FaceDataManagementPage>());
+        }
     }
 }
