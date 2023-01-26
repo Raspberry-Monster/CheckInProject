@@ -9,6 +9,10 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <StartupObject>CheckInProject.App.App</StartupObject>
+    <AssemblyVersion>1.1</AssemblyVersion>
+    <FileVersion>1.1</FileVersion>
+    <Version>1.1.0</Version>
+    <NeutralLanguage>zh-Hans</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
