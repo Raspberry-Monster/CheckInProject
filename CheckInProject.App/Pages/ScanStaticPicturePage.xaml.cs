@@ -63,7 +63,7 @@ namespace CheckInProject.App.Pages
             try
             {
                 OpenFileDialog dialog = new OpenFileDialog();
-                dialog.Filter = "图片文件|*.jpg";
+                dialog.Filter = $"图片文件|{PictureConverters.SupportedPictureExtensions}";
                 if (dialog.ShowDialog() == true)
                 {
                     using (var targetFile = dialog.OpenFile())
@@ -117,7 +117,7 @@ namespace CheckInProject.App.Pages
             try
             {
                 OpenFileDialog dialog = new OpenFileDialog();
-                dialog.Filter = "图片文件|*.jpg";
+                dialog.Filter = $"图片文件|{PictureConverters.SupportedPictureExtensions}";
                 if (dialog.ShowDialog() == true)
                 {
                     using (var targetFile = dialog.OpenFile())

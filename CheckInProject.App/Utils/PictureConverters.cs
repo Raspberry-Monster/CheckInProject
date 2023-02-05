@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Media.Imaging;
@@ -42,6 +43,29 @@ namespace CheckInProject.App.Utils
                 }
             }
             return targetImage;
+        }
+        public readonly static List<string> SupportedPictureType = new List<string>
+        {
+            ".JPG",
+            ".JPEG",
+            ".PNG",
+            ".BMP",
+            ".EXIF",
+            ".TIFF"
+        };
+
+
+        public static string SupportedPictureExtensions
+        {
+            get
+            {
+                var supportedPictureExtensions = new List<string>();
+                foreach (var type in SupportedPictureType)
+                {
+                    supportedPictureExtensions.Add($"*{type}");
+                }
+                return string.Join(";", supportedPictureExtensions);
+            }
         }
     }
 }

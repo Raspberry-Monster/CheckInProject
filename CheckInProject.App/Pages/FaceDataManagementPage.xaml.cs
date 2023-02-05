@@ -93,7 +93,7 @@ namespace CheckInProject.App.Pages
                         foreach (var imageFile in imageFiles)
                         {
                             FileInfo fileInfo = new FileInfo(imageFile);
-                            if (fileInfo.Extension == ".jpg" && ServiceProvider != null)
+                            if (PictureConverters.SupportedPictureType.Contains(fileInfo.Extension.ToUpper()) && ServiceProvider != null)
                             {
                                 CurrentName = $"正在创建{fileInfo.Name}的人脸数据";
 
