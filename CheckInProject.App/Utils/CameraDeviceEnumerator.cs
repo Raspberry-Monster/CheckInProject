@@ -11,12 +11,21 @@ namespace CheckInProject.App.Utils
         {
             var videoInputDevices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
             int openCvId = 0;
-            return videoInputDevices.Select(v => new CameraDevice()
+            var resultCameraDevices= new List<CameraDevice>();
+            foreach (var device in videoInputDevices)
             {
-                DeviceId = v.DevicePath,
-                CameraName = v.Name,
-                OpenCvId = openCvId++
-            }).ToList();
+                using (device)
+                {
+                    var cameraDevice = new CameraDevice()
+                    {
+                        CameraName = device.Name,
+                        DeviceId = device.DevicePath,
+                        OpenCvId = openCvId++
+                    };
+                    resultCameraDevices.Add(cameraDevice);
+                }
+            }
+            return resultCameraDevices;
         }
     }
 }

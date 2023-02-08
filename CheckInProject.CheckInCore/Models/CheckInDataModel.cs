@@ -1,18 +1,46 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MiniExcelLibs.Attributes;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 
 namespace CheckInProject.CheckInCore.Models
 {
     public class CheckInDataModels
     {
+        [Key]
+        public Guid RecordID { get; set; }
+        public Guid StudentID { get; set; }
+        public bool MorningCheckedIn { get; set; } = false;
+        public TimeOnly? MorningCheckInTime { get; set; }
+        public bool AfternoonCheckedIn { get; set; } = false;
+        public TimeOnly? AfternoonCheckInTime { get; set; }
+        public bool EveningCheckedIn { get; set; } = false;
+        public TimeOnly? EveningCheckInTime { get; set; }
+        public DateOnly CheckInDate { get; set; }
+        public CheckInDataExportModels GetCheckInDataExportModels()
+        {
+            var result = new CheckInDataExportModels()
+            {
+                MorningCheckedIn = MorningCheckedIn,
+                AfternoonCheckedIn = AfternoonCheckedIn,
+                EveningCheckedIn = EveningCheckedIn,
+                MorningCheckInTime = MorningCheckInTime,
+                AfternoonCheckInTime = AfternoonCheckInTime,
+                EveningCheckInTime = EveningCheckInTime,
+                CheckInDate = CheckInDate,
+                StudentID = StudentID
+            };
+            return result;
+        }
+    }
+    public class CheckInDataExportModels
+    {
         [ExcelColumnName("学生姓名")]
         public string? Name { get; set; }
         [ExcelColumnName("学号")]
-        public uint? PersonID { get; set; }
+        public uint? ClassID { get; set; }
         [ExcelIgnore]
-        [Key]
-        public Guid RecordID { get; set; }
+        public Guid StudentID { get; set; }
         [ExcelColumnName("早上打卡情况")]
         public bool MorningCheckedIn { get; set; } = false;
         [ExcelColumnName("早上打卡时间")]

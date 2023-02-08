@@ -35,7 +35,7 @@
                             <TextBlock Text="姓名: " Grid.Row="0" Grid.Column="0" FontSize="15"/>
                             <TextBlock Text="{Binding Name, Mode=OneWay}" Grid.Row="0" Grid.Column="1" FontSize="15"/>
                             <TextBlock Text="学号: " Grid.Row="0" Grid.Column="2" FontSize="15"/>
-                            <TextBlock Text="{Binding PersonID, Mode=OneWay}" Grid.Row="0" Grid.Column="3" FontSize="15"/>
+                            <TextBlock Text="{Binding ClassID, Mode=OneWay}" Grid.Row="0" Grid.Column="3" FontSize="15"/>
                             <TextBlock Text="上午打卡状态: " Grid.Row="1" Grid.Column="0" FontSize="15"/>
                             <TextBlock Text="{Binding MorningCheckedIn, Mode=OneWay}" Grid.Row="1" Grid.Column="1" FontSize="15"/>
                             <TextBlock Text="上午打卡时间: " Grid.Row="1" Grid.Column="2" FontSize="15"/>

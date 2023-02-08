@@ -27,11 +27,11 @@ namespace CheckInProject.App.Pages
         {
             try
             {
-                var targetData = (sender as ListBox)?.SelectedItem;
-                if (targetData != null)
+                var targetData = (sender as ListBox)?.SelectedItem as RawPersonDataBase;
+                if (targetData!= null)
                 {
                     var currentTime = DateTime.Now;
-                    await CheckInManager.CheckIn(DateOnly.FromDateTime(currentTime), TimeOnly.FromDateTime(currentTime), (targetData as RawPersonDataBase)?.PersonID);
+                    await CheckInManager.CheckIn(DateOnly.FromDateTime(currentTime), TimeOnly.FromDateTime(currentTime), targetData.StudentID);
                     App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
                 }
             }

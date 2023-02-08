@@ -8,12 +8,12 @@ namespace CheckInProject.PersonDataCore.Models
     {
         public string? Name { get; set; }
         public required double[] FaceEncoding { get; set; }
-        public uint? PersonID { get; set; }
-        public Guid RecordID { get; set; }
+        public uint? ClassID { get; set; }
+        public Guid StudentID { get; set; }
         public StringPersonDataBase ConvertToStringPersonDataBase()
         {
             var encodingResult = string.Join(";", FaceEncoding.Select(p => p.ToString()).ToArray());
-            return new StringPersonDataBase { FaceEncodingString = encodingResult, Name = Name, PersonID = PersonID, RecordID = RecordID };
+            return new StringPersonDataBase { FaceEncodingString = encodingResult, Name = Name, ClassID = ClassID, StudentID = StudentID };
         }
     }
     public class StringPersonDataBase
@@ -23,14 +23,14 @@ namespace CheckInProject.PersonDataCore.Models
         [ExcelIgnore]
         public required string FaceEncodingString { get; set; }
         [ExcelColumnName("学号")]
-        public uint? PersonID { get; set; }
+        public uint? ClassID { get; set; }
         [ExcelIgnore]
         [Key]
-        public Guid RecordID { get; set; }
+        public Guid StudentID { get; set; }
         public RawPersonDataBase ConvertToRawPersonDataBase()
         {
             var encodingResult = Array.ConvertAll(FaceEncodingString.Split(';'), double.Parse);
-            return new RawPersonDataBase { FaceEncoding = encodingResult, Name = Name, PersonID = PersonID, RecordID = RecordID };
+            return new RawPersonDataBase { FaceEncoding = encodingResult, Name = Name, ClassID = ClassID, StudentID = StudentID };
         }
     }
 

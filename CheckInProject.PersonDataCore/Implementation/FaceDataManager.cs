@@ -18,7 +18,7 @@ namespace CheckInProject.PersonDataCore.Implementation
             {
                 var encoding = FaceRecognitionAPI.FaceEncodings(recognitionImage).First().GetRawEncoding();
                 var personName = sourceName;
-                return new RawPersonDataBase { FaceEncoding = encoding, Name = personName, PersonID = personID };
+                return new RawPersonDataBase { FaceEncoding = encoding, Name = personName, ClassID = personID };
             }
         }
         public IList<RawPersonDataBase> CreateFacesData(Bitmap sourceData)

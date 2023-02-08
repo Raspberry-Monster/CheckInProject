@@ -7,11 +7,13 @@ using CheckInProject.PersonDataCore.Implementation;
 using CheckInProject.PersonDataCore.Interfaces;
 using CheckInProject.PersonDataCore.Models;
 using FaceRecognitionDotNet;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace CheckInProject.App
 {
@@ -51,6 +53,7 @@ namespace CheckInProject.App
             service.AddTransient<DatabaseManagementPage>();
             service.AddTransient<SetDatabasePasswordPage>();
             ServiceProvider = service.BuildServiceProvider();
+            App.Current.DispatcherUnhandledException += App_DispatcherUnhandledException;
         }
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -59,11 +62,17 @@ namespace CheckInProject.App
             {
                 if (item == "--DisableDatabaseProtection") DisableDatabaseProtection = true;
             }
-            ServiceProvider.GetRequiredService<StringPersonDataBaseContext>().Database.EnsureCreated();
-            ServiceProvider.GetRequiredService<CheckInDataModelContext>().Database.EnsureCreated();
+            ServiceProvider.GetRequiredService<StringPersonDataBaseContext>().Database.Migrate();
+            ServiceProvider.GetRequiredService<CheckInDataModelContext>().Database.Migrate();
             ServiceProvider.GetRequiredService<MainWindow>()?.Show();
             var settings = ServiceProvider.GetRequiredService<Settings>();
             if (settings.IsFirstRun && string.IsNullOrEmpty(settings.PasswordMD5)) RootFrame?.Navigate(ServiceProvider.GetRequiredService<SetDatabasePasswordPage>());
+        }
+        private static void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show($"发生了未经处理的异常:\n{e.Exception.Message}", "未经处理的异常", MessageBoxButton.OK,
+                             MessageBoxImage.Error);
+            e.Handled = true;
         }
     }
 }

@@ -85,8 +85,8 @@ namespace CheckInProject.App.Pages
                                         resultName = result.First().Name;
                                         if (string.IsNullOrEmpty(resultName)) resultName = "未识别到已知人脸";
                                         ResultNames = resultName ?? string.Empty;
-                                        await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().PersonID);
-                                        await Task.Delay(1500);
+                                        await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().StudentID);
+                                        await Task.Delay(1000);
                                         App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
 
                                     }
@@ -136,9 +136,9 @@ namespace CheckInProject.App.Pages
                                 {
                                     var resultNameList = result.Select(t => t.Name).ToList();
                                     resultNameString = string.Join("/", resultNameList);
-                                    result.Select(t => t.PersonID).ToList().ForEach(async t => await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), t));
+                                    result.Select(t => t.StudentID).ToList().ForEach(async t => await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), t));
                                     ResultNames = resultNameString;
-                                    await Task.Delay(1500);
+                                    await Task.Delay(1000);
                                     App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
                                 }
                                 else

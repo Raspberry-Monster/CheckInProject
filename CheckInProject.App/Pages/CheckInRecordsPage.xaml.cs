@@ -16,7 +16,7 @@ namespace CheckInProject.App.Pages
     {
         private readonly IServiceProvider ServiceProvider;
         public ICheckInManager CheckInManager => ServiceProvider.GetRequiredService<ICheckInManager>();
-        public List<CheckInDataModels> ListBoxItems => CheckInManager.QueryTodayRecords();
+        public List<CheckInDataExportModels> ListBoxItems => CheckInManager.QueryTodayRecords();
         public CheckInRecordsPage(IServiceProvider provider)
         {
             ServiceProvider = provider;

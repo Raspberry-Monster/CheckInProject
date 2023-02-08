@@ -17,9 +17,9 @@ namespace CheckInProject.CheckInCore.Implementation
             Provider = provider;
         }
 
-        public async Task CheckIn(DateOnly currentDate, TimeOnly currentTime, uint? personId)
+        public async Task CheckIn(DateOnly currentDate, TimeOnly currentTime, Guid studentId)
         {
-            var checkInHistory = CheckInDatabaseService.CheckInData.ToList().Find(t => t.CheckInDate == currentDate && t.PersonID == personId);
+            var checkInHistory = CheckInDatabaseService.CheckInData.ToList().Find(t => t.CheckInDate == currentDate && t.StudentID == studentId);
             if (checkInHistory != null)
             {
                 var currentTimeDescription = TimeConverter.ConvertTimeToDescription(currentTime);
@@ -43,13 +43,12 @@ namespace CheckInProject.CheckInCore.Implementation
             }
             else
             {
-                var personData = PersonDatabaseService.PersonData.ToList().Find(t => t.PersonID == personId);
+                var personData = PersonDatabaseService.PersonData.ToList().Find(t => t.StudentID == studentId);
                 var currentTimeDescription = TimeConverter.ConvertTimeToDescription(currentTime);
                 var checkInData = new CheckInDataModels
                 {
-                    Name = personData?.Name,
                     CheckInDate = currentDate,
-                    PersonID = personId
+                    StudentID= studentId
                 };
                 switch (currentTimeDescription)
                 {
@@ -71,33 +70,40 @@ namespace CheckInProject.CheckInCore.Implementation
             }
         }
 
-        public List<CheckInDataModels> QueryTodayRecords()
+        public List<CheckInDataExportModels> QueryTodayRecords()
         {
-            var result = CheckInDatabaseService.CheckInData.AsEnumerable().Where(t => t.CheckInDate == DateOnly.FromDateTime(DateTime.Now)).OrderBy(t => t.PersonID).ToList();
-            return result;
+            var sourceData = CheckInDatabaseService.CheckInData.AsEnumerable().Where(t => t.CheckInDate == DateOnly.FromDateTime(DateTime.Now)).ToList();
+            var resultList = sourceData.Select(t=>t.GetCheckInDataExportModels()).ToList();
+            foreach (var item in resultList)
+            {
+                var personData = PersonDatabaseService.PersonData.AsEnumerable().Where(t => t.StudentID == item.StudentID).First();
+                item.Name = personData.Name;
+                item.ClassID = personData.ClassID;
+            }
+            return resultList;
         }
         public List<StringPersonDataBase> QueryRequestedTimeUncheckedRecords(TimeEnum? targetTime)
         {
             var todaycheckInRecords = CheckInDatabaseService.CheckInData.AsEnumerable().Where(t => t.CheckInDate == DateOnly.FromDateTime(DateTime.Now)).ToList();
-            IList<uint?> currentTimeCheckedInRecords;
+            IList<Guid> currentTimeCheckedInRecords;
             if (targetTime == null) targetTime = TimeConverter.ConvertTimeToDescription(TimeOnly.FromDateTime(DateTime.Now));
             switch (targetTime)
             {
                 case TimeEnum.Morning:
-                    currentTimeCheckedInRecords = todaycheckInRecords.Where(t => t.MorningCheckedIn == true).Select(t => t.PersonID).ToList();
+                    currentTimeCheckedInRecords = todaycheckInRecords.Where(t => t.MorningCheckedIn == true).Select(t => t.StudentID).ToList();
                     break;
                 case TimeEnum.Afternoon:
-                    currentTimeCheckedInRecords = todaycheckInRecords.Where(t => t.AfternoonCheckedIn == true).Select(t => t.PersonID).ToList();
+                    currentTimeCheckedInRecords = todaycheckInRecords.Where(t => t.AfternoonCheckedIn == true).Select(t => t.StudentID).ToList();
                     break;
                 case TimeEnum.Evening:
-                    currentTimeCheckedInRecords = todaycheckInRecords.Where(t => t.EveningCheckedIn == true).Select(t => t.PersonID).ToList();
+                    currentTimeCheckedInRecords = todaycheckInRecords.Where(t => t.EveningCheckedIn == true).Select(t => t.StudentID).ToList();
                     break;
                 default:
-                    currentTimeCheckedInRecords = new List<uint?>();
+                    currentTimeCheckedInRecords = new List<Guid>();
                     break;
             }
-            var checkedPeople = PersonDatabaseService.PersonData.AsEnumerable().Where(t => currentTimeCheckedInRecords.Contains(t.PersonID)).ToList();
-            var uncheckedPeople = PersonDatabaseService.PersonData.AsEnumerable().OrderBy(t => t.PersonID).ToList();
+            var checkedPeople = PersonDatabaseService.PersonData.AsEnumerable().Where(t => currentTimeCheckedInRecords.Contains(t.StudentID)).ToList();
+            var uncheckedPeople = PersonDatabaseService.PersonData.AsEnumerable().OrderBy(t => t.ClassID).ToList();
             checkedPeople.ForEach(t => uncheckedPeople.Remove(t));
             return uncheckedPeople;
         }

@@ -19,15 +19,30 @@
         <Image Grid.Row="0" Source="{Binding SourceImage}" />
         <TextBlock Grid.Row="1" Text="{Binding ResultNames,Mode=OneWay}" FontSize="15" HorizontalAlignment="Center" />
         <Grid Grid.Row="2">
-            <TextBlock Text="摄像头选择: " HorizontalAlignment="Left" FontSize="18"/>
-            <ComboBox x:Name="CameraSelector" ItemsSource="{Binding Path=CameraDevices, Mode=OneWay}" HorizontalAlignment="Center">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding CameraName}"/>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            <Button x:Name="StartCaptureButton" Content="打开摄像头并比对最近人脸" Click="StartCaptureButton_Click" HorizontalAlignment="Right"/>
+            <Grid HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="摄像头选择: " HorizontalAlignment="Left" FontSize="18" Grid.Column="0"/>
+                <ComboBox x:Name="CameraSelector" ItemsSource="{Binding Path=CameraDevices, Mode=OneWay}" HorizontalAlignment="Right" Grid.Column="1">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding CameraName}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </Grid>
+            <CheckBox Content="连续扫描" IsChecked="{Binding KeepRecognizing, Mode=TwoWay}" HorizontalAlignment="Center" FontSize="18"/>
+            <Grid Grid.Row="2" HorizontalAlignment="Right" Visibility="{Binding CameraMode, Mode=OneWay, Converter={StaticResource ReversedBooleanToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="StartCaptureSingleButton" Content="打开摄像头并比对最近人脸" Click="StartCaptureSingleButton_Click" Grid.Column="0"/>
+                <Button x:Name="StartCaptureMultipleButton" Content="打开摄像头并比对多个人脸" Click="StartCaptureMultipleButton_Click" Grid.Column="1"/>
+            </Grid>
+            <Button x:Name="CancelCaptureButton" Content="取消" Click="CancelCaptureButton_Click" HorizontalAlignment="Right" Grid.Row="2" Visibility="{Binding CameraMode, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </Grid>
     </Grid>
 </Page>
