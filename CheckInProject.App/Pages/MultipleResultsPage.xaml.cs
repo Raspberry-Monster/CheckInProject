@@ -28,7 +28,7 @@ namespace CheckInProject.App.Pages
             try
             {
                 var targetData = (sender as ListBox)?.SelectedItem as RawPersonDataBase;
-                if (targetData!= null)
+                if (targetData != null)
                 {
                     var currentTime = DateTime.Now;
                     await CheckInManager.CheckIn(DateOnly.FromDateTime(currentTime), TimeOnly.FromDateTime(currentTime), targetData.StudentID);

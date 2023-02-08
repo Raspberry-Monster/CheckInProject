@@ -48,7 +48,7 @@ namespace CheckInProject.CheckInCore.Implementation
                 var checkInData = new CheckInDataModels
                 {
                     CheckInDate = currentDate,
-                    StudentID= studentId
+                    StudentID = studentId
                 };
                 switch (currentTimeDescription)
                 {
@@ -73,7 +73,7 @@ namespace CheckInProject.CheckInCore.Implementation
         public List<CheckInDataExportModels> QueryTodayRecords()
         {
             var sourceData = CheckInDatabaseService.CheckInData.AsEnumerable().Where(t => t.CheckInDate == DateOnly.FromDateTime(DateTime.Now)).ToList();
-            var resultList = sourceData.Select(t=>t.GetCheckInDataExportModels()).ToList();
+            var resultList = sourceData.Select(t => t.GetCheckInDataExportModels()).ToList();
             foreach (var item in resultList)
             {
                 var personData = PersonDatabaseService.PersonData.AsEnumerable().Where(t => t.StudentID == item.StudentID).First();

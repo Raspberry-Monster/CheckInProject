@@ -1,7 +1,6 @@
 ﻿using CheckInProject.App.Models;
 using DirectShowLib;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CheckInProject.App.Utils
 {
@@ -11,7 +10,7 @@ namespace CheckInProject.App.Utils
         {
             var videoInputDevices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
             int openCvId = 0;
-            var resultCameraDevices= new List<CameraDevice>();
+            var resultCameraDevices = new List<CameraDevice>();
             foreach (var device in videoInputDevices)
             {
                 using (device)

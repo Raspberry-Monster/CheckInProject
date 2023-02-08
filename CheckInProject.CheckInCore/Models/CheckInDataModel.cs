@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MiniExcelLibs.Attributes;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 
 namespace CheckInProject.CheckInCore.Models
 {
