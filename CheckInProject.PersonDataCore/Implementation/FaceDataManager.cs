@@ -34,7 +34,7 @@ namespace CheckInProject.PersonDataCore.Implementation
         {
             var faceEncodingList = faceDataList.Select(t => FaceRecognition.LoadFaceEncoding(t.FaceEncoding)).ToList();
             var targetFaceEncoding = FaceRecognition.LoadFaceEncoding(targetFaceData.FaceEncoding);
-            var recognizedFaces = FaceRecognition.CompareFaces(faceEncodingList, targetFaceEncoding, 0.5);
+            var recognizedFaces = FaceRecognition.CompareFaces(faceEncodingList, targetFaceEncoding, 0.4);
             var reconizedNames = new List<RawPersonDataBase>();
             var index = 0;
             foreach (var recognizedFace in recognizedFaces)
@@ -55,7 +55,7 @@ namespace CheckInProject.PersonDataCore.Implementation
             foreach (var targetFaceData in targetFaceDataList)
             {
                 var targetFaceEncoding = FaceRecognition.LoadFaceEncoding(targetFaceData.FaceEncoding);
-                var recognizedFaces = FaceRecognition.CompareFaces(faceEncodingList, targetFaceEncoding, 0.5);
+                var recognizedFaces = FaceRecognition.CompareFaces(faceEncodingList, targetFaceEncoding, 0.4);
                 var index = 0;
                 foreach (var recognizedFace in recognizedFaces)
                 {

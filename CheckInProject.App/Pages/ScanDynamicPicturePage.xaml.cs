@@ -175,6 +175,7 @@ namespace CheckInProject.App.Pages
                                             ResultNames = ResultItems.FirstOrDefault()?.Name ?? string.Empty;
                                             await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().StudentID);
                                             await Task.Delay(1000);
+                                            if (!KeepRecognizing) Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>()));
                                             if (!KeepRecognizing) break;
                                         }
                                         else
@@ -182,6 +183,8 @@ namespace CheckInProject.App.Pages
                                             var resultNameList = result.Select(t => t.Name).ToList();
                                             ResultNames = string.Join("/", resultNameList);
                                             result.Select(t => t.StudentID).ToList().ForEach(async t => await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), t));
+                                            await Task.Delay(1000);
+                                            if (!KeepRecognizing) Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>()));
                                             if (!KeepRecognizing) break;
                                         }
                                     }
