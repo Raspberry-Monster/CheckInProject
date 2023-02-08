@@ -16,11 +16,6 @@ namespace CheckInProject.App
         {
             ServiceProvider = provider;
             InitializeComponent();
-            if (!File.Exists("PersonData.db") || !File.Exists("CheckInData.db"))
-            {
-                MessageBox.Show("程序文件损坏，请重新解压。", "灾难性故障", MessageBoxButton.OK, MessageBoxImage.Error);
-                App.Current.Shutdown();
-            }
             App.RootFrame = RootFrame;
         }
         private void ScanStaticPicturePage_Click(object sender, RoutedEventArgs e)
