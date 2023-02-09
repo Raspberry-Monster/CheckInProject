@@ -420,8 +420,8 @@ Affirmer's express Statement of Purpose.
 For more information, please see
 <http://creativecommons.org/publicdomain/zero/1.0/>
 
-haarcascade_frontalface_default.xml
-https://github.com/opencv/opencv/blob/4.x/data/haarcascades/haarcascade_frontalface_default.xml
+haarcascade_frontalface_alt.xml
+https://github.com/opencv/opencv/blob/4.x/data/haarcascades/haarcascade_frontalface_alt.xml
   IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
 
   By downloading, copying, installing or using the software you agree to this license.
