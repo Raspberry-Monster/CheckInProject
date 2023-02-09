@@ -1,7 +1,6 @@
 ﻿using CheckInProject.App.Pages;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.IO;
 using System.Windows;
 
 namespace CheckInProject.App

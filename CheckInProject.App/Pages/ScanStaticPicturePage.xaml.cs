@@ -70,39 +70,38 @@ namespace CheckInProject.App.Pages
                     {
                         using (var sourceBitmap = new Bitmap(targetFile))
                         {
-                            using (var targetBitmap = PictureConverters.CompressImage(sourceBitmap, 640, 480))
+                            var targetFaceBitmapModels = FaceRecognitionAPI.GetFaceImage(sourceBitmap);
+                            var targetFaceBitmap = targetFaceBitmapModels.FaceImages.First();
+                            SourceImage = PictureConverters.ToBitmapImage(targetFaceBitmapModels.RetangleImage);
+                            var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetFaceBitmap, null, null));
+                            var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
+                            var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
+                            var resultName = string.Empty;
+                            if (result.Count > 0)
                             {
-                                var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
-                                SourceImage = sourceImage;
-                                var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, null, null));
-                                var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
-                                var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
-                                var resultName = string.Empty;
-                                if (result.Count > 0)
+                                if (result.Count == 1)
                                 {
-                                    if (result.Count == 1)
-                                    {
-                                        resultName = result.First().Name;
-                                        if (string.IsNullOrEmpty(resultName)) resultName = "未识别到已知人脸";
-                                        ResultNames = resultName ?? string.Empty;
-                                        await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().StudentID);
-                                        await Task.Delay(1000);
-                                        App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
+                                    resultName = result.First().Name;
+                                    if (string.IsNullOrEmpty(resultName)) resultName = "未识别到已知人脸";
+                                    ResultNames = resultName ?? string.Empty;
+                                    await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().StudentID);
+                                    await Task.Delay(1000);
+                                    App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
 
-                                    }
-                                    else
-                                    {
-                                        ResultItems.Clear();
-                                        ResultItems.AddRange(result);
-                                        App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>());
-                                        resultName = "多个检测结果";
-                                    }
                                 }
                                 else
                                 {
-                                    ResultNames = "未识别到已知人脸";
+                                    ResultItems.Clear();
+                                    ResultItems.AddRange(result);
+                                    App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>());
+                                    resultName = "多个检测结果";
                                 }
                             }
+                            else
+                            {
+                                ResultNames = "未识别到已知人脸";
+                            }
+
                         }
                     }
                 }
@@ -124,28 +123,26 @@ namespace CheckInProject.App.Pages
                     {
                         using (var sourceBitmap = new Bitmap(targetFile))
                         {
-                            using (var targetBitmap = PictureConverters.CompressImage(sourceBitmap, 640, 480))
+                            var resultNameString = string.Empty;
+                            var targetFacesBitmapModels = FaceRecognitionAPI.GetFacesImage(sourceBitmap);
+                            var targetFacesBitmapList = targetFacesBitmapModels.FaceImages;
+                            SourceImage = PictureConverters.ToBitmapImage(targetFacesBitmapModels.RetangleImage);
+                            var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFacesData(targetFacesBitmapList));
+                            var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
+                            var result = await Task.Run(() => FaceRecognitionAPI.CompareFaces(knownFaces, targetFaceEncoding));
+                            if (result.Count > 0)
                             {
-                                var resultNameString = string.Empty;
-                                var sourceImage = PictureConverters.ToBitmapImage(targetBitmap);
-                                SourceImage = sourceImage;
-                                var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFacesData(targetBitmap));
-                                var knownFaces = await Task.Run(() => DatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
-                                var result = await Task.Run(() => FaceRecognitionAPI.CompareFaces(knownFaces, targetFaceEncoding));
-                                if (result.Count > 0)
-                                {
-                                    var resultNameList = result.Select(t => t.Name).ToList();
-                                    resultNameString = string.Join("/", resultNameList);
-                                    result.Select(t => t.StudentID).ToList().ForEach(async t => await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), t));
-                                    ResultNames = resultNameString;
-                                    await Task.Delay(1000);
-                                    App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
-                                }
-                                else
-                                {
-                                    resultNameString = "未识别到已知人脸";
-                                    ResultNames = resultNameString;
-                                }
+                                var resultNameList = result.Select(t => t.Name).ToList();
+                                resultNameString = string.Join("/", resultNameList);
+                                result.Select(t => t.StudentID).ToList().ForEach(async t => await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), t));
+                                ResultNames = resultNameString;
+                                await Task.Delay(1000);
+                                App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>());
+                            }
+                            else
+                            {
+                                resultNameString = "未识别到已知人脸";
+                                ResultNames = resultNameString;
                             }
                         }
                     }

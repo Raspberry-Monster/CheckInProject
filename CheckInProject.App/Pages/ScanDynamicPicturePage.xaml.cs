@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using Rect = OpenCvSharp.Rect;
 
 namespace CheckInProject.App.Pages
 {
@@ -133,46 +132,37 @@ namespace CheckInProject.App.Pages
                     {
                         return;
                     }
-                    capture.FrameWidth = 640;
-                    capture.FrameHeight = 480;
                     var image = new Mat();
-                    CascadeClassifier cascade = new CascadeClassifier("haarcascade_frontalface_default.xml");
                     while (CameraMode)
                     {
                         capture.Read(image);
                         if (image.Empty())
                             break;
-                        Rect[] faces = cascade.DetectMultiScale(
-                            image: image,
-                            scaleFactor: 1.1,
-                            minNeighbors: 1,
-                            flags: HaarDetectionTypes.DoRoughSearch | HaarDetectionTypes.ScaleImage,
-                            minSize: new OpenCvSharp.Size(30, 30)
-                        );
-                        if (faces.Length <= 0)
+                        var faceCount = FaceRecognitionAPI.GetFaceCount(image);
+                        var resultPicture = PictureConverters.ToBitmapImage(faceCount.RetangleImage);
+                        SourceImage = resultPicture;
+                        if (faceCount.Count <= 0)
                         {
-                            var resultPicture = PictureConverters.ToBitmapImage(image.ToBitmap());
-                            SourceImage = resultPicture;
                             capturedTime = 0;
                         }
                         else
                         {
-                            var resultPicture = PictureConverters.ToBitmapImage(image.ToBitmap());
-                            SourceImage = resultPicture;
                             capturedTime++;
                             if (capturedTime >= 20)
                             {
                                 var targetBitmap = image.ToBitmap();
                                 if (isMultiplePersonMode)
                                 {
-                                    var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFacesData(targetBitmap));
+                                    var targetFaceBitmapModels = await Task.Run(() => FaceRecognitionAPI.GetFacesImage(targetBitmap));
+                                    var targetFaceBitmapList = targetFaceBitmapModels.FaceImages;
+                                    var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFacesData(targetFaceBitmapList));
                                     var knownFaces = await Task.Run(() => PersonDatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
                                     var result = await Task.Run(() => FaceRecognitionAPI.CompareFaces(knownFaces, targetFaceEncoding));
                                     if (result.Count > 0)
                                     {
                                         if (result.Count == 1)
                                         {
-                                            ResultNames = ResultItems.FirstOrDefault()?.Name ?? string.Empty;
+                                            ResultNames = result.FirstOrDefault()?.Name ?? string.Empty;
                                             await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().StudentID);
                                             await Task.Delay(1000);
                                             if (!KeepRecognizing) Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>()));
@@ -192,7 +182,9 @@ namespace CheckInProject.App.Pages
                                 }
                                 else
                                 {
-                                    var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetBitmap, null, null));
+                                    var targetFaceBitmapModels = await Task.Run(() => FaceRecognitionAPI.GetFaceImage(targetBitmap));
+                                    var targetFaceBitmap = targetFaceBitmapModels.FaceImages.First();
+                                    var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetFaceBitmap, null, null));
                                     var knownFaces = await Task.Run(() => PersonDatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
                                     var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
                                     if (result.Count > 0)

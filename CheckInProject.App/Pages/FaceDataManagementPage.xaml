@@ -19,7 +19,7 @@
         <TextBox IsReadOnly="True" x:Name="PathNameTextBox" Text="{Binding PathName, Mode=OneWay}" Grid.Row="0"/>
         <Grid Grid.Row="1">
             <TextBlock Text="{Binding CurrentName, Mode=OneWay}" HorizontalAlignment="Left"/>
-            <CheckBox Content="在创建人脸数据时压缩图像至720P" IsChecked="{Binding CompressImageWhenEncoding, Mode=TwoWay}" HorizontalAlignment="Center"/>
+            <CheckBox Content="在创建人脸数据时裁切人脸图像" IsChecked="{Binding TrimImageWhenEncoding, Mode=TwoWay}" HorizontalAlignment="Center"/>
             <Button Content="创建人脸数据" x:Name="CreateFaceDataButton" Click="CreateFaceDataButton_Click" HorizontalAlignment="Right"/>
         </Grid>
         <ListBox x:Name="NamesListBox" ItemsSource="{Binding ListBoxItems, Mode=OneWay}" Grid.Row="2">

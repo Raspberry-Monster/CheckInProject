@@ -16,7 +16,7 @@ AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 DefaultDirName={localappdata}\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=H:\Projects\CheckInProject\LICENSE
+LicenseFile=D:\CheckInProject\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 PrivilegesRequired=lowest
@@ -34,8 +34,8 @@ Name: "ChineseSimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.i
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "H:\Projects\CheckInProject\CheckInProject.App\bin\x64\Release\net7.0-windows\publish\win-x64\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "H:\Projects\CheckInProject\CheckInProject.App\bin\x64\Release\net7.0-windows\publish\win-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "D:\CheckInProject\CheckInProject.App\bin\x64\Release\net7.0-windows\publish\win-x64\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\CheckInProject\CheckInProject.App\bin\x64\Release\net7.0-windows\publish\win-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

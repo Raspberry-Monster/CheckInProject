@@ -7,8 +7,8 @@ using CheckInProject.PersonDataCore.Implementation;
 using CheckInProject.PersonDataCore.Interfaces;
 using CheckInProject.PersonDataCore.Models;
 using FaceRecognitionDotNet;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -36,6 +36,8 @@ namespace CheckInProject.App
             //For services
             var faceRecognitionService = FaceRecognition.Create("FaceRecognitionModel");
             service.AddSingleton(faceRecognitionService);
+            CascadeClassifier cascadeService = new CascadeClassifier("haarcascade_frontalface_alt.xml");
+            service.AddSingleton(cascadeService);
             var applicationSettings = Settings.CreateSettings();
             service.AddSingleton(applicationSettings);
             service.AddSingleton<IPersonDatabaseManager, PersonDatabaseManager>();

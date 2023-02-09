@@ -2,6 +2,8 @@
 using CheckInProject.PersonDataCore.Models;
 using FaceRecognitionDotNet;
 using Microsoft.Extensions.DependencyInjection;
+using OpenCvSharp;
+using OpenCvSharp.Extensions;
 using System.Drawing;
 
 namespace CheckInProject.PersonDataCore.Implementation
@@ -9,6 +11,8 @@ namespace CheckInProject.PersonDataCore.Implementation
     public class FaceDataManager : IFaceDataManager
     {
         public FaceRecognition FaceRecognitionAPI => Provider.GetRequiredService<FaceRecognition>();
+
+        public CascadeClassifier Cascade => Provider.GetRequiredService<CascadeClassifier>();
 
         private readonly IServiceProvider Provider;
 
@@ -21,13 +25,18 @@ namespace CheckInProject.PersonDataCore.Implementation
                 return new RawPersonDataBase { FaceEncoding = encoding, Name = personName, ClassID = personID };
             }
         }
-        public IList<RawPersonDataBase> CreateFacesData(Bitmap sourceData)
+        public IList<RawPersonDataBase> CreateFacesData(IList<Bitmap> sourceData)
         {
-            using (var recognitionImage = FaceRecognition.LoadImage(sourceData))
+            var resultFaces = new List<RawPersonDataBase>();
+            foreach (var item in sourceData)
             {
-                var encodings = FaceRecognitionAPI.FaceEncodings(recognitionImage).Select(t => new RawPersonDataBase { FaceEncoding = t.GetRawEncoding() }).ToList();
-                return encodings;
+                using (var recognitionImage = FaceRecognition.LoadImage(item))
+                {
+                    var encodings = FaceRecognitionAPI.FaceEncodings(recognitionImage).Select(t => new RawPersonDataBase { FaceEncoding = t.GetRawEncoding() }).ToList();
+                    resultFaces.AddRange(encodings);
+                }
             }
+            return resultFaces;
         }
 
         public IList<RawPersonDataBase> CompareFace(IList<RawPersonDataBase> faceDataList, RawPersonDataBase targetFaceData)
@@ -68,6 +77,68 @@ namespace CheckInProject.PersonDataCore.Implementation
                 }
             }
             return reconizedNames;
+        }
+        public FaceCountModels GetFaceCount(Mat sourceImage)
+        {
+            Rect[] recognizedFaces = Cascade.DetectMultiScale(
+                            image: sourceImage,
+                            scaleFactor: 1.1,
+                            minNeighbors: 5,
+                            flags: HaarDetectionTypes.DoRoughSearch | HaarDetectionTypes.ScaleImage,
+                            minSize: new OpenCvSharp.Size(30, 30)
+                        );
+            foreach (var recognizedFace in recognizedFaces)
+            {
+                sourceImage.Rectangle(recognizedFace, Scalar.GreenYellow, 2);
+            }
+            return new FaceCountModels() {RetangleImage = sourceImage.ToBitmap(), Count=recognizedFaces.Length};
+        }
+
+        public FaceRetangleModels GetFaceImage(Bitmap sourceBitmap)
+        {
+            using (var sourceImage = sourceBitmap.ToMat())
+            {
+                Rect[] recognizedFaces = Cascade.DetectMultiScale(
+                                            image: sourceImage,
+                                            scaleFactor: 1.1,
+                                            minNeighbors: 5,
+                                            flags: HaarDetectionTypes.DoRoughSearch | HaarDetectionTypes.ScaleImage,
+                                            minSize: new OpenCvSharp.Size(30, 30)
+                                        );
+                var maxiumRect = recognizedFaces.ToList().OrderByDescending(t => t.Height * t.Width).FirstOrDefault();
+                var resultList = new List<Bitmap>();
+                using (var resultImage = new Mat(sourceImage, maxiumRect))
+                {
+                    resultList.Add(resultImage.ToBitmap());
+                }
+                var retangleImage = sourceImage.Clone();
+                retangleImage.Rectangle(maxiumRect, Scalar.GreenYellow, 5);
+                return new FaceRetangleModels { FaceImages = resultList, RetangleImage = retangleImage.ToBitmap() };
+            }
+        }
+
+        public FaceRetangleModels GetFacesImage(Bitmap sourceBitmap)
+        {
+            using (var sourceImage = sourceBitmap.ToMat())
+            {
+                Rect[] recognizedFaces = Cascade.DetectMultiScale(
+                                            image: sourceImage,
+                                            scaleFactor: 1.1,
+                                            minNeighbors: 5,
+                                            flags: HaarDetectionTypes.DoRoughSearch | HaarDetectionTypes.ScaleImage,
+                                            minSize: new OpenCvSharp.Size(30, 30)
+                                        );
+                var resultList = new List<Bitmap>();
+                foreach (var recognizedFace in recognizedFaces)
+                {
+                    using (var resultImage = new Mat(sourceImage, recognizedFace))
+                    {
+                        resultList.Add(resultImage.ToBitmap());
+                        sourceImage.Rectangle(recognizedFace, Scalar.GreenYellow, 5);
+                    }
+                }
+                return new FaceRetangleModels() { FaceImages = resultList, RetangleImage = sourceImage.ToBitmap() };
+            }
         }
 
         public FaceDataManager(IServiceProvider serviceProvider)

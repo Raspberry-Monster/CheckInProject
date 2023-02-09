@@ -46,17 +46,17 @@ namespace CheckInProject.App.Pages
         }
         private string _pathName = string.Empty;
 
-        public bool CompressImageWhenEncoding
+        public bool TrimImageWhenEncoding
         {
-            get => _compressImageWhenEncoding;
+            get => _trimImageWhenEncoding;
             set
             {
-                _compressImageWhenEncoding = value;
+                _trimImageWhenEncoding = value;
                 NotifyPropertyChanged();
             }
         }
 
-        private bool _compressImageWhenEncoding = false;
+        private bool _trimImageWhenEncoding = false;
 
         private IFaceDataManager FaceRecognitionAPI => ServiceProvider.GetRequiredService<IFaceDataManager>();
         private IPersonDatabaseManager DatabaseAPI => ServiceProvider.GetRequiredService<IPersonDatabaseManager>();
@@ -100,7 +100,7 @@ namespace CheckInProject.App.Pages
                                 using (var sourceImage = new Bitmap(imageFile))
                                 {
                                     Bitmap imageBitmap;
-                                    if (CompressImageWhenEncoding) imageBitmap = PictureConverters.CompressImage(sourceImage, 1280, 720);
+                                    if (TrimImageWhenEncoding) imageBitmap = FaceRecognitionAPI.GetFaceImage(sourceImage).FaceImages.First();
                                     else imageBitmap = sourceImage;
                                     var sourceName = fileInfo.Name.Replace(fileInfo.Extension, string.Empty);
                                     var resultFaceData = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(imageBitmap, sourceName, ++index));
