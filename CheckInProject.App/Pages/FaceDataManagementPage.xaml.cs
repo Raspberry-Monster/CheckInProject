@@ -100,7 +100,7 @@ namespace CheckInProject.App.Pages
                                 using (var sourceImage = new Bitmap(imageFile))
                                 {
                                     Bitmap imageBitmap;
-                                    if (TrimImageWhenEncoding) imageBitmap = FaceRecognitionAPI.GetFaceImage(sourceImage).FaceImages.First();
+                                    if (TrimImageWhenEncoding) imageBitmap = await Task.Run(() => FaceRecognitionAPI.GetFaceImage(sourceImage).FaceImages.First());
                                     else imageBitmap = sourceImage;
                                     var sourceName = fileInfo.Name.Replace(fileInfo.Extension, string.Empty);
                                     var resultFaceData = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(imageBitmap, sourceName, ++index));

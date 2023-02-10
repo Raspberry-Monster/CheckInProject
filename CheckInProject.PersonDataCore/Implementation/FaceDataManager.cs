@@ -42,29 +42,10 @@ namespace CheckInProject.PersonDataCore.Implementation
         public IList<RawPersonDataBase> CompareFace(IList<RawPersonDataBase> faceDataList, RawPersonDataBase targetFaceData)
         {
             var faceEncodingList = faceDataList.Select(t => FaceRecognition.LoadFaceEncoding(t.FaceEncoding)).ToList();
-            var targetFaceEncoding = FaceRecognition.LoadFaceEncoding(targetFaceData.FaceEncoding);
-            var recognizedFaces = FaceRecognition.CompareFaces(faceEncodingList, targetFaceEncoding, 0.4);
-            var reconizedNames = new List<RawPersonDataBase>();
-            var index = 0;
-            foreach (var recognizedFace in recognizedFaces)
+            using (var targetFaceEncoding = FaceRecognition.LoadFaceEncoding(targetFaceData.FaceEncoding))
             {
-                if (recognizedFace)
-                {
-                    var resultName = faceDataList[index];
-                    reconizedNames.Add(resultName);
-                }
-                index++;
-            }
-            return reconizedNames;
-        }
-        public IList<RawPersonDataBase> CompareFaces(IList<RawPersonDataBase> faceDataList, IList<RawPersonDataBase> targetFaceDataList)
-        {
-            var faceEncodingList = faceDataList.Select(t => FaceRecognition.LoadFaceEncoding(t.FaceEncoding)).ToList();
-            var reconizedNames = new List<RawPersonDataBase>();
-            foreach (var targetFaceData in targetFaceDataList)
-            {
-                var targetFaceEncoding = FaceRecognition.LoadFaceEncoding(targetFaceData.FaceEncoding);
                 var recognizedFaces = FaceRecognition.CompareFaces(faceEncodingList, targetFaceEncoding, 0.4);
+                var reconizedNames = new List<RawPersonDataBase>();
                 var index = 0;
                 foreach (var recognizedFace in recognizedFaces)
                 {
@@ -75,7 +56,39 @@ namespace CheckInProject.PersonDataCore.Implementation
                     }
                     index++;
                 }
+                foreach (var item in faceEncodingList)
+                {
+                    item?.Dispose();
+                }
+                return reconizedNames;
             }
+            
+        }
+        public IList<RawPersonDataBase> CompareFaces(IList<RawPersonDataBase> faceDataList, IList<RawPersonDataBase> targetFaceDataList)
+        {
+            var faceEncodingList = faceDataList.Select(t => FaceRecognition.LoadFaceEncoding(t.FaceEncoding)).ToList();
+            var reconizedNames = new List<RawPersonDataBase>();
+            foreach (var targetFaceData in targetFaceDataList)
+            {
+                using (var targetFaceEncoding = FaceRecognition.LoadFaceEncoding(targetFaceData.FaceEncoding))
+                {
+                    var recognizedFaces = FaceRecognition.CompareFaces(faceEncodingList, targetFaceEncoding, 0.4);
+                    var index = 0;
+                    foreach (var recognizedFace in recognizedFaces)
+                    {
+                        if (recognizedFace)
+                        {
+                            var resultName = faceDataList[index];
+                            reconizedNames.Add(resultName);
+                        }
+                        index++;
+                    }
+                }
+            }
+            foreach (var item in faceEncodingList)
+            {
+                item?.Dispose();
+            } 
             return reconizedNames;
         }
         public FaceCountModels GetFaceCount(Mat sourceImage)
@@ -87,11 +100,14 @@ namespace CheckInProject.PersonDataCore.Implementation
                             flags: HaarDetectionTypes.DoRoughSearch | HaarDetectionTypes.ScaleImage,
                             minSize: new OpenCvSharp.Size(30, 30)
                         );
-            foreach (var recognizedFace in recognizedFaces)
+            using(var targetImage = sourceImage.Clone())
             {
-                sourceImage.Rectangle(recognizedFace, Scalar.GreenYellow, 2);
+                foreach (var recognizedFace in recognizedFaces)
+                {
+                    targetImage.Rectangle(recognizedFace, Scalar.GreenYellow, 2);
+                }
+                return new FaceCountModels() { RetangleImage = targetImage.ToBitmap(), Count = recognizedFaces.Length };
             }
-            return new FaceCountModels() {RetangleImage = sourceImage.ToBitmap(), Count=recognizedFaces.Length};
         }
 
         public FaceRetangleModels GetFaceImage(Bitmap sourceBitmap)
@@ -111,9 +127,8 @@ namespace CheckInProject.PersonDataCore.Implementation
                 {
                     resultList.Add(resultImage.ToBitmap());
                 }
-                var retangleImage = sourceImage.Clone();
-                retangleImage.Rectangle(maxiumRect, Scalar.GreenYellow, 5);
-                return new FaceRetangleModels { FaceImages = resultList, RetangleImage = retangleImage.ToBitmap() };
+                sourceImage.Rectangle(maxiumRect, Scalar.GreenYellow, 5);
+                return new FaceRetangleModels { FaceImages = resultList, RetangleImage = sourceImage.ToBitmap() };
             }
         }
 

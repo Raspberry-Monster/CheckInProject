@@ -132,87 +132,97 @@ namespace CheckInProject.App.Pages
                     {
                         return;
                     }
-                    var image = new Mat();
-                    while (CameraMode)
+                    using (var image = new Mat())
                     {
-                        capture.Read(image);
-                        if (image.Empty())
-                            break;
-                        var faceCount = FaceRecognitionAPI.GetFaceCount(image);
-                        var resultPicture = PictureConverters.ToBitmapImage(faceCount.RetangleImage);
-                        SourceImage = resultPicture;
-                        if (faceCount.Count <= 0)
+                        while (CameraMode)
                         {
-                            capturedTime = 0;
-                        }
-                        else
-                        {
-                            capturedTime++;
-                            if (capturedTime >= 20)
+                            capture.Read(image);
+                            if (image.Empty())
+                                break;
+                            var faceCount = FaceRecognitionAPI.GetFaceCount(image);
+                            using (var retangleImage = faceCount.RetangleImage)
                             {
-                                var targetBitmap = image.ToBitmap();
-                                if (isMultiplePersonMode)
+                                var resultPicture = await Task.Run(() => PictureConverters.ToBitmapImage(retangleImage));
+                                SourceImage = resultPicture;
+                                if (faceCount.Count <= 0)
                                 {
-                                    var targetFaceBitmapModels = await Task.Run(() => FaceRecognitionAPI.GetFacesImage(targetBitmap));
-                                    var targetFaceBitmapList = targetFaceBitmapModels.FaceImages;
-                                    var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFacesData(targetFaceBitmapList));
-                                    var knownFaces = await Task.Run(() => PersonDatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
-                                    var result = await Task.Run(() => FaceRecognitionAPI.CompareFaces(knownFaces, targetFaceEncoding));
-                                    if (result.Count > 0)
-                                    {
-                                        if (result.Count == 1)
-                                        {
-                                            ResultNames = result.FirstOrDefault()?.Name ?? string.Empty;
-                                            await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().StudentID);
-                                            await Task.Delay(1000);
-                                            if (!KeepRecognizing) Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>()));
-                                            if (!KeepRecognizing) break;
-                                        }
-                                        else
-                                        {
-                                            var resultNameList = result.Select(t => t.Name).ToList();
-                                            ResultNames = string.Join("/", resultNameList);
-                                            result.Select(t => t.StudentID).ToList().ForEach(async t => await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), t));
-                                            await Task.Delay(1000);
-                                            if (!KeepRecognizing) Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>()));
-                                            if (!KeepRecognizing) break;
-                                        }
-                                    }
                                     capturedTime = 0;
                                 }
                                 else
                                 {
-                                    var targetFaceBitmapModels = await Task.Run(() => FaceRecognitionAPI.GetFaceImage(targetBitmap));
-                                    var targetFaceBitmap = targetFaceBitmapModels.FaceImages.First();
-                                    var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetFaceBitmap, null, null));
-                                    var knownFaces = await Task.Run(() => PersonDatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
-                                    var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
-                                    if (result.Count > 0)
+                                    capturedTime++;
+                                    if (capturedTime >= 20)
                                     {
-                                        if (result.Count == 1)
+                                        using (var targetBitmap = image.ToBitmap())
                                         {
-                                            ResultNames = result.First()?.Name ?? string.Empty;
-                                            await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().StudentID);
-                                            await Task.Delay(1000);
-                                            if (!KeepRecognizing) Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>()));
-                                            if (!KeepRecognizing) break;
+                                            if (isMultiplePersonMode)
+                                            {
+                                                var targetFaceBitmapModels = await Task.Run(() => FaceRecognitionAPI.GetFacesImage(targetBitmap));
+                                                var targetFaceBitmapList = targetFaceBitmapModels.FaceImages;
+                                                var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFacesData(targetFaceBitmapList));
+                                                var knownFaces = await Task.Run(() => PersonDatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
+                                                var result = await Task.Run(() => FaceRecognitionAPI.CompareFaces(knownFaces, targetFaceEncoding));
+                                                if (result.Count > 0)
+                                                {
+                                                    if (result.Count == 1)
+                                                    {
+                                                        ResultNames = result.FirstOrDefault()?.Name ?? string.Empty;
+                                                        await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().StudentID);
+                                                        await Task.Delay(1000);
+                                                        if (!KeepRecognizing) Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>()));
+                                                        if (!KeepRecognizing) break;
+                                                    }
+                                                    else
+                                                    {
+                                                        var resultNameList = result.Select(t => t.Name).ToList();
+                                                        ResultNames = string.Join("/", resultNameList);
+                                                        result.Select(t => t.StudentID).ToList().ForEach(async t => await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), t));
+                                                        await Task.Delay(1000);
+                                                        if (!KeepRecognizing) Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>()));
+                                                        if (!KeepRecognizing) break;
+                                                    }
+                                                }
+                                                foreach (var item in targetFaceBitmapList)
+                                                {
+                                                    item?.Dispose();
+                                                }
+                                                capturedTime = 0;
+                                            }
+                                            else
+                                            {
+                                                var targetFaceBitmapModels = await Task.Run(() => FaceRecognitionAPI.GetFaceImage(targetBitmap));
+                                                var targetFaceBitmap = targetFaceBitmapModels.FaceImages.First();
+                                                var targetFaceEncoding = await Task.Run(() => FaceRecognitionAPI.CreateFaceData(targetFaceBitmap, null, null));
+                                                var knownFaces = await Task.Run(() => PersonDatabaseAPI.GetFaceData().Select(t => t.ConvertToRawPersonDataBase()).ToList());
+                                                var result = await Task.Run(() => FaceRecognitionAPI.CompareFace(knownFaces, targetFaceEncoding));
+                                                if (result.Count > 0)
+                                                {
+                                                    if (result.Count == 1)
+                                                    {
+                                                        ResultNames = result.First()?.Name ?? string.Empty;
+                                                        await CheckInManager.CheckIn(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromDateTime(DateTime.Now), result.First().StudentID);
+                                                        await Task.Delay(1000);
+                                                        if (!KeepRecognizing) Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<CheckInRecordsPage>()));
+                                                        if (!KeepRecognizing) break;
+                                                    }
+                                                    else
+                                                    {
+                                                        ResultItems.Clear();
+                                                        ResultItems.AddRange(result);
+                                                        Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>()));
+                                                        ResultNames = "多个可能的检测结果";
+                                                        break;
+                                                    }
+                                                }
+                                                capturedTime = 0;
+                                            }
                                         }
-                                        else
-                                        {
-                                            ResultItems.Clear();
-                                            ResultItems.AddRange(result);
-                                            Dispatcher.Invoke(() => App.RootFrame?.Navigate(ServiceProvider.GetRequiredService<MultipleResultsPage>()));
-                                            ResultNames = "多个可能的检测结果";
-                                            break;
-                                        }
-                                    }
-                                    capturedTime = 0;
+                                    }                                
                                 }
                             }
                         }
+                        CameraMode = false;
                     }
-                    CameraMode = false;
-                    image.Dispose();
                 }
             }
             catch (Exception ex)
